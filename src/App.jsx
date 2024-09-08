@@ -8,7 +8,7 @@ import Footer from './components/Footer';
 import Home from './components/Home';
 import ProjectList from './components/ProjectsList';
 import ProjectForm from './components/ProjectForm';
-import { projects } from './data/projects';
+import { projectsData } from './data/projects';
 // (example) 
 import RecipeList from './components/RecipeList';
 import Recipe from './components/Recipe';
@@ -41,8 +41,9 @@ function App() {
           <Routes>
             
             <Route path="/" element={<Home />} />
-            <Route path="/projects" element={<ProjectList projects={projects} />} />
-            <Route path="/project/add" element={<ProjectForm />} />
+            <Route path="/projects" element={<ProjectList projects={projectsData} />} />
+            <Route path="/project/add" element={<ProjectForm isNewProject={true} id={null} />} />
+            <Route path="/project/edit/:id" element={<ProjectForm isNewProject={false} />} />
             <Route path="/recipes" element={<RecipeList recipes={recipes} />} />
             <Route path="/recipe/:id" element={<Recipe recipes={recipes} />} />
             <Route path="/about" element={<About />} />

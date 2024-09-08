@@ -1,134 +1,214 @@
 import React, { useState } from 'react';
-import { projects } from '../data/projects';
+import { projectsData } from '../data/projects';
 
-const ProjectForm = ({ initialProject = {}, onSave }) => {
-  const [title, setTitle] = useState(initialProject.title || '');
-  const [description, setDescription] = useState(initialProject.description || '');
-  const [instructions, setInstructions] = useState(initialProject.instructions || '');
-  const [initialClue, setInitialClue] = useState(initialProject.initialClue || '');
-  const [homescreenDisplay, setHomescreenDisplay] = useState(initialProject.homescreenDisplay || 'Display initial clue');
-  const [participantScoring, setParticipantScoring] = useState(initialProject.participantScoring || 'Number of Scanned QR Codes');
-  const [isPublished, setIsPublished] = useState(initialProject.isPublished || false);
+function ProjectForm({isNewProject}) {
+    // get the id from the URL
+    let id = null;
+    let existingProject;
 
-  const handleSave = (e) => {
-    e.preventDefault();
-    const projectData = {
-      title,
-      description,
-      instructions,
-      initialClue,
-      homescreenDisplay,
-      participantScoring,
-      isPublished,
+    if (!isNewProject) {
+        const id = window.location.pathname.split('/').pop();
+        existingProject = projectsData.find(project => project.id == id);
+    }
+
+    // State to manage the projects
+    const [projects, setProjects] = useState(projectsData);
+
+    // State to manage the current project being added or edited
+    const [currentProject, setCurrentProject] = useState({
+        id: existingProject ? existingProject.id : null,
+        title: existingProject ? existingProject.title : '',
+        description: existingProject ? existingProject.description : '',
+        instructions: existingProject ? existingProject.instructions : '',
+        initialClue: existingProject ? existingProject.initialClue : '',
+        homescreenDisplay: existingProject ? existingProject.homescreenDisplay : 'Display initial clue',
+        participantScoring: existingProject ? existingProject.participantScoring : 'Number of Scanned QR Codes',
+        status: existingProject ? existingProject.status : 'Published',
+        published: existingProject ? existingProject.published : false
+    });
+
+    // Handle input change for form fields
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setCurrentProject({ ...currentProject, [name]: value });
     };
-    onSave(projectData);
-  };
 
-  return (
-    <div className="container">
-      <h1 className="my-4">{initialProject.id ? 'Edit Project' : 'Add Project'}</h1>
+    // Handle form submission to add or update project
+    const handleFormSubmit = (event) => {
+        event.preventDefault();
 
-      <form onSubmit={handleSave}>
-        {/* Title */}
-        <div className="mb-3">
-          <label className="form-label">Title</label>
-          <input
-            type="text"
-            className="form-control"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="The name of your project"
-            required
-          />
-        </div>
+        if (currentProject.id) {
+        // Update existing project
+        setProjects(
+            projects.map((project) =>
+            project.id === currentProject.id ? currentProject : project
+            )
+        );
+        } else {
+        // Add new project
+        setProjects([
+            ...projects,
+            { ...currentProject, id: projects.length + 1 },
+        ]);
+        }
 
-        {/* Description */}
-        <div className="mb-3">
-          <label className="form-label">Description</label>
-          <textarea
-            className="form-control"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Provide a brief description of your project. This is not displayed to participants."
-            rows="3"
-            required
-          ></textarea>
-        </div>
+        // // Reset form
+        // setCurrentProject({
+        // id: null,
+        // title: '',
+        // description: '',
+        // instructions: '',
+        // initialClue: '',
+        // homescreenDisplay: 'Display initial clue',
+        // participantScoring: 'Number of Scanned QR Codes',
+        // status: '',
+        // published: false,
+        // });
+    };
 
-        {/* Instructions */}
-        <div className="mb-3">
-          <label className="form-label">Instructions</label>
-          <textarea
-            className="form-control"
-            value={instructions}
-            onChange={(e) => setInstructions(e.target.value)}
-            placeholder="Instructions for participants, explaining how to engage with the project."
-            rows="3"
-          ></textarea>
-        </div>
+    // Handle selecting a project to edit
+    const handleEditProject = (id) => {
+        const projectToEdit = projects.find((project) => project.id === id);
+        setCurrentProject(projectToEdit);
+    };
 
-        {/* Initial Clue */}
-        <div className="mb-3">
-          <label className="form-label">Initial Clue</label>
-          <textarea
-            className="form-control"
-            value={initialClue}
-            onChange={(e) => setInitialClue(e.target.value)}
-            placeholder="The first clue to start the project. This is optional."
-            rows="2"
-          ></textarea>
-        </div>
+    return (
+        <div className="container">
+        <h2>{currentProject.id ? 'Edit Project' : 'Add Project'}</h2>
+        <form onSubmit={handleFormSubmit}>
+            <div className="mb-3">
+            <label>Title</label>
+            <input
+                type="text"
+                name="title"
+                className="form-control"
+                value={currentProject.title}
+                onChange={handleInputChange}
+                required
+            />
+            </div>
 
-        {/* Homescreen Display */}
-        <div className="mb-3">
-          <label className="form-label">Homescreen Display</label>
-          <select
-            className="form-select"
-            value={homescreenDisplay}
-            onChange={(e) => setHomescreenDisplay(e.target.value)}
-          >
-            <option value="Display initial clue">Display initial clue</option>
-            <option value="Display project description">Display project description</option>
-          </select>
-        </div>
+            <div className="mb-3">
+            <label>Description</label>
+            <textarea
+                name="description"
+                className="form-control"
+                value={currentProject.description}
+                onChange={handleInputChange}
+                required
+            />
+            </div>
 
-        {/* Participant Scoring */}
-        <div className="mb-3">
-          <label className="form-label">Participant Scoring</label>
-          <select
-            className="form-select"
-            value={participantScoring}
-            onChange={(e) => setParticipantScoring(e.target.value)}
-          >
-            <option value="Number of Scanned QR Codes">Number of Scanned QR Codes</option>
-            <option value="Time Spent on Project">Time Spent on Project</option>
-          </select>
-        </div>
+            <div className="mb-3">
+            <label>Instructions</label>
+            <textarea
+                name="instructions"
+                className="form-control"
+                value={currentProject.instructions}
+                onChange={handleInputChange}
+                required
+            />
+            </div>
 
-        {/* Published Checkbox */}
-        <div className="form-check mb-3">
-          <input
-            className="form-check-input"
-            type="checkbox"
-            checked={isPublished}
-            onChange={(e) => setIsPublished(e.target.checked)}
-            id="publishedCheck"
-          />
-          <label className="form-check-label" htmlFor="publishedCheck">
-            Published
-          </label>
-        </div>
+            <div className="mb-3">
+            <label>Initial Clue</label>
+            <textarea
+                name="initialClue"
+                className="form-control"
+                value={currentProject.initialClue}
+                onChange={handleInputChange}
+            />
+            </div>
 
-        {/* Save Button */}
-        <button type="submit" className="btn btn-primary">
-          Save Project
-        </button>
-        <button type="button" className="btn btn-danger ms-2" onClick={() => window.history.back()}>
-            Cancel
-        </button>
-      </form>
-    </div>
-  );
-};
+            <div className="mb-3">
+            <label>Homescreen Display</label>
+            <select
+                name="homescreenDisplay"
+                className="form-control"
+                value={currentProject.homescreenDisplay}
+                onChange={handleInputChange}
+            >
+                <option value="Display initial clue">Display initial clue</option>
+                <option value="Display nothing">Display nothing</option>
+            </select>
+            </div>
+
+            <div className="mb-3">
+            <label>Participant Scoring</label>
+            <select
+                name="participantScoring"
+                className="form-control"
+                value={currentProject.participantScoring}
+                onChange={handleInputChange}
+            >
+                <option value="Number of Scanned QR Codes">Number of Scanned QR Codes</option>
+                <option value="Time Taken to Complete">Time Taken to Complete</option>
+            </select>
+            </div>
+
+            <div className="mb-3">
+            <label>Status</label>
+            <select
+                name="status"
+                className="form-control"
+                value={currentProject.status}
+                onChange={handleInputChange}
+                required
+            >
+                <option value="Published">Published</option>
+                <option value="In Progress">In Progress</option>
+            </select>
+            </div>
+
+            <div className="form-check mb-3">
+            <input
+                type="checkbox"
+                className="form-check-input"
+                name="published"
+                checked={currentProject.published}
+                onChange={() =>
+                setCurrentProject({ ...currentProject, published: !currentProject.published })
+                }
+            />
+            <label className="form-check-label">Published</label>
+            </div>
+
+            <button type="submit" className="btn btn-primary">
+            {currentProject.id ? 'Update Project' : 'Save Project'}
+            </button>
+            <button
+                type="button"
+                className="btn btn-danger ms-2"
+                onClick={() => {
+                    const userConfirmed = window.confirm("Are you sure you want to leave?");
+
+                    if (userConfirmed) {
+                        window.history.back();
+                    }
+                }}
+            >
+                Leave
+            </button>
+        </form>
+
+        {/* <h3 className="mt-5">Projects List</h3>
+        <ul className="list-group">
+            {projects.map((project) => (
+            <li key={project.id} className="list-group-item d-flex justify-content-between">
+                <div>
+                <strong>{project.title}</strong> - {project.description}
+                </div>
+                <button
+                className="btn btn-sm btn-warning"
+                onClick={() => handleEditProject(project.id)}
+                >
+                Edit
+                </button>
+            </li>
+            ))}
+        </ul> */}
+        </div> 
+    );
+}
 
 export default ProjectForm;
