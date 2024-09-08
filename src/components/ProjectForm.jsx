@@ -66,12 +66,6 @@ function ProjectForm({isNewProject}) {
         // });
     };
 
-    // Handle selecting a project to edit
-    const handleEditProject = (id) => {
-        const projectToEdit = projects.find((project) => project.id === id);
-        setCurrentProject(projectToEdit);
-    };
-
     return (
         <div className="container">
         <h2>{currentProject.id ? 'Edit Project' : 'Add Project'}</h2>
@@ -173,13 +167,22 @@ function ProjectForm({isNewProject}) {
             <label className="form-check-label">Published</label>
             </div>
 
-            <button type="submit" className="btn btn-primary">
-            {currentProject.id ? 'Update Project' : 'Save Project'}
+            <button type="submit" className="btn btn-primary"
+                onClick={() => {
+                        handleFormSubmit;
+                        alert("Project saved successfully!");
+                    }
+                }
+            >
+                {
+                    currentProject.id ? 'Save Changes' : 'Add Project'
+                }
             </button>
             <button
                 type="button"
                 className="btn btn-danger ms-2"
                 onClick={() => {
+                    projectsData = projects;
                     const userConfirmed = window.confirm("Are you sure you want to leave?");
 
                     if (userConfirmed) {
