@@ -1,16 +1,30 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Container } from 'react-bootstrap';
 
 function Home() {
+
+  const imgSrc = "src/assets/MS-storypathHomePage.jpeg";
+
   return (
-    <Container>
-          <h1>Welcome to the Recipe Website</h1>
-          <p>
-            This is a recipe website built with React. You can view a list of recipes by clicking the link below.
-          </p>
-          <Link to="/recipes" className="btn btn-primary">View Recipes</Link>
-    </Container>
+    <div className="container-md text-center py-5">
+      <div className="row align-items-center">
+        <div className="col-md-6 text-start">
+          <h1 className="mb-3">Welcome to StoryPath</h1>
+          <p>Create engaging tours, hunts, and adventures!</p>
+          <ul className="list-unstyled">
+            <li>• Museum Tours</li>
+            <li>• Campus Tours</li>
+            <li>• Treasure Hunts</li>
+            <li>• And more!</li>
+          </ul>
+          <Link to="/projects" className="btn btn-primary">View Projects</Link>
+        </div>
+        <div className="col-md-6">
+          {/* at src/assets/MS-storypathHomePage.jpeg (not in component), resize to 600x400 */}
+          <img src={imgSrc} alt="StoryPath" className="img-fluid" />
+        </div>
+      </div>
+    </div>
   );
 }
 

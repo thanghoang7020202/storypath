@@ -6,6 +6,10 @@ import Footer from './components/Footer';
 
 // header links
 import Home from './components/Home';
+import ProjectList from './components/ProjectsList';
+import ProjectForm from './components/ProjectForm';
+import { projects } from './data/projects';
+// (example) 
 import RecipeList from './components/RecipeList';
 import Recipe from './components/Recipe';
 import { recipes } from './data/recipes';
@@ -17,14 +21,15 @@ import PrivacyPolicy from './components/PrivacyPolicy';
 function App() {
   const headerLinks = [
     { path: '/', text: 'Home' },
+    { path: '/projects', text: 'Projects' },
     { path: '/recipes', text: 'Recipes' }
   ];
 
   // footer links include About, Contact, and Privacy Policy
   const footerLinks = [
-    {path: '/about', text: 'About'},
-    {path: '/contact', text: 'Contact'},
-    {path: '/privacy', text: 'Privacy Policy'}
+    { path: '/about', text: 'About' },
+    { path: '/contact', text: 'Contact' },
+    { path: '/privacy', text: 'Privacy Policy' }
   ];
 
   return (
@@ -36,6 +41,8 @@ function App() {
           <Routes>
             
             <Route path="/" element={<Home />} />
+            <Route path="/projects" element={<ProjectList projects={projects} />} />
+            <Route path="/project/add" element={<ProjectForm />} />
             <Route path="/recipes" element={<RecipeList recipes={recipes} />} />
             <Route path="/recipe/:id" element={<Recipe recipes={recipes} />} />
             <Route path="/about" element={<About />} />

@@ -21,10 +21,10 @@ function Footer({footerLinks}) { // footerLinks is an array of objects
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <div className="container">
-            <p class="col-md-4 mb-0 text-muted">&copy; 2024 StoryPath. All rights reserved.</p>
+            <p className="col-md-4 mb-0 text-muted">&copy; 2024 StoryPath. All rights reserved.</p>
 
-            <a href="/" class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
-            <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
+            <a href="/" className="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+            <svg className="bi me-2" width="40" height="32"><use xlinkHref="#bootstrap"/></svg>
             </a>
 
                 <div className="collapse navbar-collapse" id="navbarNav">
