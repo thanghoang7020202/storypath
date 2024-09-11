@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
+import { Link } from 'react-router-dom';
 import { projectsData } from '../data/projects';
 
 function ProjectForm({isNewProject}) {
@@ -23,8 +24,7 @@ function ProjectForm({isNewProject}) {
         initialClue: existingProject ? existingProject.initialClue : '',
         homescreenDisplay: existingProject ? existingProject.homescreenDisplay : 'Display initial clue',
         participantScoring: existingProject ? existingProject.participantScoring : 'Number of Scanned QR Codes',
-        status: existingProject ? existingProject.status : 'Published',
-        published: existingProject ? existingProject.published : false
+        status: existingProject ? existingProject.status : 'Published'
     });
 
     // Handle input change for form fields
@@ -46,10 +46,13 @@ function ProjectForm({isNewProject}) {
         );
         } else {
         // Add new project
-        setProjects([
+        const updatedProjects = [
             ...projects,
             { ...currentProject, id: projects.length + 1 },
-        ]);
+        ];
+        setProjects(updatedProjects);
+
+        localStorage.setItem('projects', JSON.stringify(updatedProjects));
         }
 
         // // Reset form
@@ -154,19 +157,6 @@ function ProjectForm({isNewProject}) {
             </select>
             </div>
 
-            <div className="form-check mb-3">
-            <input
-                type="checkbox"
-                className="form-check-input"
-                name="published"
-                checked={currentProject.published}
-                onChange={() =>
-                setCurrentProject({ ...currentProject, published: !currentProject.published })
-                }
-            />
-            <label className="form-check-label">Published</label>
-            </div>
-
             <button type="submit" className="btn btn-primary"
                 onClick={() => {
                         handleFormSubmit;
@@ -178,22 +168,51 @@ function ProjectForm({isNewProject}) {
                     currentProject.id ? 'Save Changes' : 'Add Project'
                 }
             </button>
-            <button
-                type="button"
-                className="btn btn-danger ms-2"
-                onClick={() => {
-                    projectsData = projects;
-                    const userConfirmed = window.confirm("Are you sure you want to leave?");
+            <Link to="/projects" className="btn btn-secondary ms-2">Leave</Link>
 
-                    if (userConfirmed) {
-                        window.history.back();
-                    }
-                }}
-            >
-                Leave
-            </button>
         </form>
+        
+        <div className="container-md py-5">
+            {/* Add a heading and a button to add a new project */}
+            <div className="d-flex justify-content-between align-items-center mb-4">
+                <h1 className="fw-bold">Projects</h1>
+                <Link to="/project/add" className="btn btn-primary btn-lg">Add Project</Link>
+            </div>
 
+            <div className="list-group">
+                {projects.map((project) => (
+                <div key={project.id} className="list-group-item d-flex justify-content-between align-items-start mb-3">
+                    {/* Display the project title and description */}
+                    <div className="ms-4 me-auto">
+                        {/* Wrap title and status in one div to align them horizontally */}
+                        <div className="d-flex align-items-center">
+                            <div className="fw-bold">{project.title}</div>
+                            {/* Dynamically display the status of the project next to the title */}
+                            <span className={`badge ${project.status === 'Published' ? 'bg-success' : 'bg-secondary'} rounded-pill ms-2`}>
+                            {project.status}
+                            </span>
+                        </div>
+                        
+                        <p className="text-muted">{project.description}</p>
+                    </div>
+
+                    
+
+                    {/* Add buttons for Edit, View Locations, and Delete */}
+                    <div className="d-flex align-items-center">
+                        <button className="btn btn-warning mx-1">Edit</button>
+
+                        {/* View Locations button */}
+                        <Link to={`/projects/${project.id}`} className="btn btn-light mx-1 text-decoration-none">
+                            View Locations
+                        </Link>
+
+                        <button className="btn btn-danger mx-1">Delete</button>
+                    </div>
+                </div>
+                ))}
+            </div>
+        </div>
         {/* <h3 className="mt-5">Projects List</h3>
         <ul className="list-group">
             {projects.map((project) => (

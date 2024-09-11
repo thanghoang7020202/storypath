@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
-// Initial projects data
+
+//Initial projects data
 export const projectsData = [
   {
     id: 1,
@@ -11,7 +12,6 @@ export const projectsData = [
     homescreenDisplay: 'Display initial clue',
     participantScoring: 'Number of Scanned QR Codes',
     status: 'Published',
-    published: true,
   },
   {
     id: 2,
@@ -22,7 +22,6 @@ export const projectsData = [
     homescreenDisplay: 'Display initial clue',
     participantScoring: 'Number of Scanned QR Codes',
     status: 'Published',
-    published: true,
   },
   {
     id: 3,
@@ -33,6 +32,7 @@ export const projectsData = [
     homescreenDisplay: 'Display initial clue',
     participantScoring: 'Number of Scanned QR Codes',
     status: 'In Progress',
-    published: false,
   },
 ];
+
+

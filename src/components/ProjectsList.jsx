@@ -1,14 +1,27 @@
 import React from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { projectsData } from '../data/projects';
+import { useContext } from 'react';
+import { ProjectsContext } from '../data/ProjectsContext';
+//import { ProjectsProvider } from '../data/ProjectsContext';
 
 /**
  * ProjectList component for displaying the list of projects.
  * @returns JSX element
  */
-function ProjectList({ projects }) {
-
+function ProjectList() {
+    const [projects, setProjects] = useState(projectsData);
+    
+    useEffect(() => {
+        try {
+            setProjects(JSON.parse(localStorage.getItem('projects')));
+        } catch (error) {
+            console.error('Error parsing projects data: ', error);
+        }
+    }, []);
+    
     return (
         <div className="container-md py-5">
             {/* Add a heading and a button to add a new project */}
@@ -18,7 +31,7 @@ function ProjectList({ projects }) {
             </div>
 
             <div className="list-group">
-                {projectsData.map((project) => (
+                {projects.map((project) => (
                 <div key={project.id} className="list-group-item d-flex justify-content-between align-items-start mb-3">
                     {/* Display the project title and description */}
                     <div className="ms-4 me-auto">
@@ -54,15 +67,15 @@ function ProjectList({ projects }) {
     );
 }
 
-ProjectList.propTypes = {
-  projects: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      title: PropTypes.string.isRequired,
-      description: PropTypes.string.isRequired,
-      status: PropTypes.string.isRequired, // Added status validation
-    })
-  ).isRequired,
-};
+// ProjectList.propTypes = {
+//   projects: PropTypes.arrayOf(
+//     PropTypes.shape({
+//       id: PropTypes.number.isRequired,
+//       title: PropTypes.string.isRequired,
+//       description: PropTypes.string.isRequired,
+//       status: PropTypes.string.isRequired, // Added status validation
+//     })
+//   ).isRequired,
+// };
 
 export default ProjectList;
