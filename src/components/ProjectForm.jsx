@@ -1,34 +1,70 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
+import { addProject, updateProject, getProjects } from '../api';
 
-function ProjectForm({ isNewProject, onSubmit }) {
+function ProjectForm({ isNewProject }) {
     const navigate = useNavigate();
     const { id } = useParams();
-    const existingProject = isNewProject ? null : projectsData.find(project => project.id == id);
+    let existingProject = null;
+    // if isNewProject is false, call GET /projects/:id to get the project details
+    if (!isNewProject) {
+        useEffect(() => {
+            const fetchProject = async () => {
+                try {
+                    const data = await getProjects(id);
+                    existingProject = data[0];
+                    setCurrentProject({
+                        id: existingProject.id,
+                        title: existingProject.title,
+                        description: existingProject.description,
+                        is_published: existingProject.is_published,
+                        participant_scoring: existingProject.participant_scoring,
+                        instructions: existingProject.instructions,
+                        initial_clue: existingProject.initial_clue,
+                        homescreen_display: existingProject.homescreen_display
+                    });
+                } catch (error) {
+                    console.error('Error fetching project:', error);
+                }
+            };
+            fetchProject();
+        }, [id]);
+    }
 
     // State to manage the current project being added or edited
     const [currentProject, setCurrentProject] = useState({
         id: existingProject ? existingProject.id : null,
         title: existingProject ? existingProject.title : '',
-        is_published: existingProject ? existingProject.is_published : 'Published',
+        is_published: existingProject ? existingProject.is_published : false,
         participant_scoring: existingProject ? existingProject.participant_scoring : 'Number of Scanned QR Codes',
         username: 's4759487',
         instructions: existingProject ? existingProject.instructions : '',
         initial_clue: existingProject ? existingProject.initial_clue : '',
-        homescreen_display: existingProject ? existingProject.homescreen_display : 'Display initial clue',
+        homescreen_display: existingProject ? existingProject.homescreen_display : 'Display initial clue'
     });
 
     // Handle input change for form fields
     const handleInputChange = (event) => {
-        const { name, value } = event.target;
-        setCurrentProject({ ...currentProject, [name]: value });
+        const { name, value,type, checked } = event.target;
+        setCurrentProject({ ...currentProject, [name]: type === 'checkbox' ? checked : value });
     };
 
     // Handle form submission to add or update project
     const handleFormSubmit = async (event) => {
-        event.preventDefault();
+        event.preventDefault(); 
 
-        await onSubmit(currentProject); // Call the correct handler passed as prop (add or update)
+        if (isNewProject) {
+            // remove id from currentProject
+            delete currentProject.id; // Remove the ID before adding a new project
+            // add project and get the response
+            await addProject(currentProject);
+            alert('Project added successfully!');
+        } else {
+            await updateProject(id, currentProject);
+            alert('Project updated successfully!');
+        }
+
+        // pop up message        
         navigate('/projects'); // Redirect to the projects list after submission
     };
 
@@ -107,17 +143,14 @@ function ProjectForm({ isNewProject, onSubmit }) {
                 </div>
 
                 <div className="mb-3">
-                    <label>Status</label>
-                    <select
+                    <label>Published</label>
+                    <input
+                        type = "checkbox"
                         name="is_published"
-                        className="form-control"
-                        value={currentProject.is_published}
+                        className="form-check-input"
+                        checked={currentProject.is_published}
                         onChange={handleInputChange}
-                        required
-                    >
-                        <option value="Published">Published</option>
-                        <option value="In Progress">In Progress</option>
-                    </select>
+                        />
                 </div>
 
                 <button type="submit" className="btn btn-primary">

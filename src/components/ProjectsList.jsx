@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { ProjectsContext } from '../data/ProjectsContext';
-import { deleteProject } from '../api';
+import { deleteProject, getProjects} from '../api';
 
 /**
  * ProjectList component for displaying the list of projects.
@@ -9,19 +9,28 @@ import { deleteProject } from '../api';
  */
 function ProjectList() {
     // Fetch projects from context
-    const projects = useContext(ProjectsContext);
     const [projectList, setProjectList] = useState([]);
 
+    // Fetch projects from the API when the component mounts
     useEffect(() => {
-        setProjectList(projects); // Set projects from context to local state
-    }, [projects]);
+        const fetchProjects = async () => {
+            try {
+                const data = await getProjects(); // Await the async call to getProjects
+                setProjectList(data); // Set the state with the fetched projects
+            } catch (error) {
+                console.error('Error fetching projects:', error);
+            }
+        };
+
+        fetchProjects(); // Call the async function
+    }, []); // Empty dependency array ensures this runs once on mount
 
     // Handle deleting a project
     const handleDelete = async (projectId) => {
         try {
-            await deleteProject(projectId);
+            await deleteProject(projectId); // Delete project from the API
             setProjectList((prevProjects) =>
-                prevProjects.filter((proj) => proj.id !== projectId)
+                prevProjects.filter((proj) => proj.id !== projectId) // Remove the deleted project from state
             );
         } catch (error) {
             console.error(`Error deleting project ${projectId}:`, error);
@@ -50,13 +59,13 @@ function ProjectList() {
                                     <div className="fw-bold">{project.title}</div>
                                     {/* Dynamically display the status of the project next to the title */}
                                     <span
-                                        className={`badge ${
-                                            project.is_published === 'Published'
+                                        className={`badge ms-2 ${
+                                            project.is_published === true
                                                 ? 'bg-success'
                                                 : 'bg-secondary'
-                                        } rounded-pill ms-2`}
+                                        }`}
                                     >
-                                        {project.is_published}
+                                        {project.is_published ? 'Published' : 'Draft'}
                                     </span>
                                 </div>
                                 <p className="text-muted">{project.description}</p>

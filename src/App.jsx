@@ -4,11 +4,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 
-// header links
 import Home from './components/Home';
 import ProjectList from './components/ProjectsList';
 import ProjectForm from './components/ProjectForm';
-// import { projectsData } from './data/projects'; // No longer needed
 import { ProjectsContext } from './data/ProjectsContext';
 
 // Example Recipe imports
@@ -75,18 +73,6 @@ function App() {
     }
   };
 
-  // Function to handle deleting a project (calls API)
-  const handleDeleteProject = async (projectId) => {
-    try {
-      await deleteProject(projectId);
-      setProjects((prevProjects) =>
-        prevProjects.filter((proj) => proj.id !== projectId)
-      );
-    } catch (error) {
-      console.error('Error deleting project:', error);
-    }
-  };
-
   return (
     <Router>
       <div>
@@ -95,24 +81,14 @@ function App() {
           <ProjectsContext.Provider value={projects}>
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route
-                path="/projects"
-                element={<ProjectList projects={projects} />}
-              />
+              <Route path="/projects" element={<ProjectList projects={projects} />} />
               <Route
                 path="/project/add"
-                element={<ProjectForm
-                  isNewProject={true}
-                  id={null}
-                  onSubmit={handleAddProject} // Use the add project handler
-                />}
+                element={<ProjectForm isNewProject={true}/>}
               />
               <Route
                 path="/project/edit/:id"
-                element={<ProjectForm
-                  isNewProject={false}
-                  onSubmit={handleUpdateProject} // Use the update project handler
-                />}
+                element={<ProjectForm isNewProject={false} />}
               />
               <Route path="/recipes" element={<RecipeList recipes={recipes} />} />
               <Route path="/recipe/:id" element={<Recipe recipes={recipes} />} />

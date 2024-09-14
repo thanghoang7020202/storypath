@@ -26,7 +26,7 @@ const apiRequest = async (endpoint, method = 'GET', body = null) => {
         }
         return response.json(); // Parse the JSON response
     } catch (error) {
-        console.error(`Error in API request: ${error.message}`);
+        console.error(`Error in API request: ${error}`);
         throw error; // Rethrow to handle it in the calling function
     }
 };
@@ -42,12 +42,21 @@ export const getProjects = async () => {
     }
 };
 
+// 1.5 GET Request - Fetch a single project
+export const getProject = async (projectId) => {
+    try {
+        const data = await apiRequest(`/project?id=eq.${projectId}`);
+        console.log('Project:', data);
+        return data; // Return the project if needed
+    } catch (error) {
+        console.error('Error fetching project:', error);
+    }
+}
+
 // 2. POST Request - Add a new project
 export const addProject = async (newProject) => {
     try {
-        const data = await apiRequest('/project', 'POST', newProject);
-        console.log('New project added:', data);
-        return data; // Return the added project if needed
+        await apiRequest('/project', 'POST', newProject);
     } catch (error) {
         console.error('Error adding project:', error);
     }
@@ -56,9 +65,7 @@ export const addProject = async (newProject) => {
 // 3. PATCH Request - Update a project
 export const updateProject = async (projectId, updatedData) => {
     try {
-        const data = await apiRequest(`/project?id=eq.${projectId}`, 'PATCH', updatedData);
-        console.log(`Project ${projectId} updated:`, data);
-        return data; // Return the updated project if needed
+        await apiRequest(`/project?id=eq.${projectId}`, 'PATCH', updatedData);
     } catch (error) {
         console.error(`Error updating project ${projectId}:`, error);
     }
