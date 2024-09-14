@@ -91,7 +91,6 @@ function ProjectForm({ isNewProject }) {
                         className="form-control"
                         value={currentProject.description || ''}
                         onChange={handleInputChange}
-                        required
                     />
                 </div>
 
@@ -102,7 +101,6 @@ function ProjectForm({ isNewProject }) {
                         className="form-control"
                         value={currentProject.instructions}
                         onChange={handleInputChange}
-                        required
                     />
                 </div>
 

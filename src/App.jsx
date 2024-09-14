@@ -7,6 +7,8 @@ import Footer from './components/Footer';
 import Home from './components/Home';
 import ProjectList from './components/ProjectsList';
 import ProjectForm from './components/ProjectForm';
+import LocationsList from './components/LocationsList';
+import LocationForm from './components/LocationForm';
 import { ProjectsContext } from './data/ProjectsContext';
 
 // Example Recipe imports
@@ -21,7 +23,6 @@ import PrivacyPolicy from './components/PrivacyPolicy';
 
 // Importing API functions from api.js
 import { getProjects, addProject, updateProject, deleteProject } from './api';
-
 function App() {
   const headerLinks = [
     { path: '/', text: 'Home' },
@@ -82,14 +83,11 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/projects" element={<ProjectList projects={projects} />} />
-              <Route
-                path="/project/add"
-                element={<ProjectForm isNewProject={true}/>}
-              />
-              <Route
-                path="/project/edit/:id"
-                element={<ProjectForm isNewProject={false} />}
-              />
+              <Route path="/project/add" element={<ProjectForm isNewProject={true}/>} />
+              <Route path="/project/edit/:id" element={<ProjectForm isNewProject={false} />}/>
+              <Route path="/locations/:project_id" element={<LocationsList />} />
+              <Route path="/location/add/:id" element={<LocationForm isNewLocation={true} />} />
+              <Route path="/location/edit/:id" element={<LocationForm isNewLocation={false} />} />
               <Route path="/recipes" element={<RecipeList recipes={recipes} />} />
               <Route path="/recipe/:id" element={<Recipe recipes={recipes} />} />
               <Route path="/about" element={<About />} />

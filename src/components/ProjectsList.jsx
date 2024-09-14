@@ -79,7 +79,7 @@ function ProjectList() {
 
                                 {/* View Locations button */}
                                 <Link
-                                    to={`/projects/${project.id}`}
+                                    to={`/locations/${project.id}`}
                                     className="btn btn-light mx-1 text-decoration-none"
                                 >
                                     View Locations

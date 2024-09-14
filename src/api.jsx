@@ -92,13 +92,38 @@ export const getLocations = async () => {
     }
 };
 
+export const getLocation = async (locationId) => {
+    try {
+        const data = await apiRequest(`/location?id=eq.${locationId}`);
+        console.log('Location:', data);
+        return data; // Return the location if needed
+    } catch (error) {
+        console.error('Error fetching location:', error);
+    }
+}
+
 // 6. POST Request - Add a new location
 export const addLocation = async (newLocation) => {
     try {
-        const data = await apiRequest('/location', 'POST', newLocation);
-        console.log('New location added:', data);
-        return data; // Return the added location if needed
+        await apiRequest('/location', 'POST', newLocation);
     } catch (error) {
         console.error('Error adding location:', error);
     }
 };
+
+export const updateLocation = async (locationId, updatedData) => {
+    try {
+        await apiRequest(`/location?id=eq.${locationId}`, 'PATCH', updatedData);
+    } catch (error) {
+        console.error(`Error updating location ${locationId}:`, error);
+    }
+};
+
+export const deleteLocation = async (locationId) => {
+    try {
+        await apiRequest(`/location?id=eq.${locationId}`, 'DELETE');
+        console.log(`Location ${locationId} deleted`);
+    } catch (error) {
+        console.error(`Error deleting location ${locationId}:`, error);
+    }
+}
