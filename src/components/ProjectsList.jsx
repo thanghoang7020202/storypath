@@ -1,27 +1,33 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
-import { projectsData } from '../data/projects';
-import { useContext } from 'react';
 import { ProjectsContext } from '../data/ProjectsContext';
-//import { ProjectsProvider } from '../data/ProjectsContext';
+import { deleteProject } from '../api';
 
 /**
  * ProjectList component for displaying the list of projects.
  * @returns JSX element
  */
 function ProjectList() {
-    const [projects, setProjects] = useState(projectsData);
-    
+    // Fetch projects from context
+    const projects = useContext(ProjectsContext);
+    const [projectList, setProjectList] = useState([]);
+
     useEffect(() => {
+        setProjectList(projects); // Set projects from context to local state
+    }, [projects]);
+
+    // Handle deleting a project
+    const handleDelete = async (projectId) => {
         try {
-            setProjects(JSON.parse(localStorage.getItem('projects')));
+            await deleteProject(projectId);
+            setProjectList((prevProjects) =>
+                prevProjects.filter((proj) => proj.id !== projectId)
+            );
         } catch (error) {
-            console.error('Error parsing projects data: ', error);
+            console.error(`Error deleting project ${projectId}:`, error);
         }
-    }, []);
-    
+    };
+
     return (
         <div className="container-md py-5">
             {/* Add a heading and a button to add a new project */}
@@ -31,51 +37,60 @@ function ProjectList() {
             </div>
 
             <div className="list-group">
-                {projects.map((project) => (
-                <div key={project.id} className="list-group-item d-flex justify-content-between align-items-start mb-3">
-                    {/* Display the project title and description */}
-                    <div className="ms-4 me-auto">
-                        {/* Wrap title and status in one div to align them horizontally */}
-                        <div className="d-flex align-items-center">
-                            <div className="fw-bold">{project.title}</div>
-                            {/* Dynamically display the status of the project next to the title */}
-                            <span className={`badge ${project.status === 'Published' ? 'bg-success' : 'bg-secondary'} rounded-pill ms-2`}>
-                            {project.status}
-                            </span>
+                {projectList.length > 0 ? (
+                    projectList.map((project) => (
+                        <div
+                            key={project.id}
+                            className="list-group-item d-flex justify-content-between align-items-start mb-3"
+                        >
+                            {/* Display the project title and description */}
+                            <div className="ms-4 me-auto">
+                                {/* Wrap title and status in one div to align them horizontally */}
+                                <div className="d-flex align-items-center">
+                                    <div className="fw-bold">{project.title}</div>
+                                    {/* Dynamically display the status of the project next to the title */}
+                                    <span
+                                        className={`badge ${
+                                            project.is_published === 'Published'
+                                                ? 'bg-success'
+                                                : 'bg-secondary'
+                                        } rounded-pill ms-2`}
+                                    >
+                                        {project.is_published}
+                                    </span>
+                                </div>
+                                <p className="text-muted">{project.description}</p>
+                            </div>
+
+                            {/* Add buttons for Edit, View Locations, and Delete */}
+                            <div className="d-flex align-items-center">
+                                <Link to={`/project/edit/${project.id}`} className="btn btn-warning mx-1">
+                                    Edit
+                                </Link>
+
+                                {/* View Locations button */}
+                                <Link
+                                    to={`/projects/${project.id}`}
+                                    className="btn btn-light mx-1 text-decoration-none"
+                                >
+                                    View Locations
+                                </Link>
+
+                                <button
+                                    className="btn btn-danger mx-1"
+                                    onClick={() => handleDelete(project.id)}
+                                >
+                                    Delete
+                                </button>
+                            </div>
                         </div>
-                        
-                        <p className="text-muted">{project.description}</p>
-                    </div>
-
-                    
-
-                    {/* Add buttons for Edit, View Locations, and Delete */}
-                    <div className="d-flex align-items-center">
-                        <button className="btn btn-warning mx-1">Edit</button>
-
-                        {/* View Locations button */}
-                        <Link to={`/projects/${project.id}`} className="btn btn-light mx-1 text-decoration-none">
-                            View Locations
-                        </Link>
-
-                        <button className="btn btn-danger mx-1">Delete</button>
-                    </div>
-                </div>
-                ))}
+                    ))
+                ) : (
+                    <p>No projects available.</p>
+                )}
             </div>
         </div>
     );
 }
-
-// ProjectList.propTypes = {
-//   projects: PropTypes.arrayOf(
-//     PropTypes.shape({
-//       id: PropTypes.number.isRequired,
-//       title: PropTypes.string.isRequired,
-//       description: PropTypes.string.isRequired,
-//       status: PropTypes.string.isRequired, // Added status validation
-//     })
-//   ).isRequired,
-// };
 
 export default ProjectList;
