@@ -17,7 +17,8 @@ POST {{baseUrl}}/api/project
 Authorization: Bearer {{jwtToken}}
 Content-Type: application/json
 
-{
+{   
+    "id": 2030,
     "username": "s4759487",
     "title": "Important information about your account.",
     "description": "Dear customer,\nWe have noticed some suspicious activity on your account. Please click [here](https://scam-check.uq.edu.au?userId=uqehugh3) to reset your password or [here](https://scamer-checker.uq.edu.au) to go."
@@ -29,6 +30,17 @@ DELETE {{baseUrl}}/api/project?id=eq.2030
 Authorization: Bearer {{jwtToken}}
 Content-Type: application/json
     
-    {
-        "username": "s4759487"
-    }
+{
+    "username": "s4759487"
+}
+
+### Update
+PATCH {{baseUrl}}/api/project?id=eq.2030
+Authorization: Bearer {{jwtToken}}
+Content-Type: application/json
+
+{
+    "username": "s4759487",
+    "title": "Important information about your account.",
+    "description": "this is updated description"
+}
