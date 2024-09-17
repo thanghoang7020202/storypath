@@ -1,18 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { addLocation, updateLocation, getLocations } from '../api'; // Assuming you have API functions for locations
+import { addLocation, updateLocation, getLocation } from '../api'; // Assuming you have API functions for locations
 
 function LocationForm({ isNewLocation }) {
     const navigate = useNavigate();
     const { id } = useParams(); // this id can be either project_id (if adding new) or location_id (if editing)
     let existingLocation = null;
 
+    // State to manage the current location being added or edited
+    const [currentLocation, setCurrentLocation] = useState({
+        id: existingLocation ? existingLocation.id : null,
+        project_id: existingLocation ? existingLocation.project_id : id,
+        location_name: existingLocation ? existingLocation.location_name : '',
+        location_trigger: existingLocation ? existingLocation.location_trigger : '',
+        location_position: existingLocation ? existingLocation.location_position : '',
+        location_order: existingLocation ? existingLocation.location_order : 0,
+        username: 's4759487',
+        location_content: existingLocation ? existingLocation.location_content : '',
+        extra: existingLocation ? existingLocation.extra : '',
+        clue: existingLocation ? existingLocation.clue : '',
+        score_points: existingLocation ? existingLocation.score_points : 0,
+    });
+    
     // If this is not a new location, fetch the location details -> id is location_id
     if (!isNewLocation) {
         useEffect(() => {
             const fetchLocation = async () => {
                 try {
-                    const data = await getLocations(id); // Fetch location by ID
+                    const data = await getLocation(id);
                     existingLocation = data[0];
                     setCurrentLocation({
                         id: existingLocation.id,
@@ -34,21 +49,6 @@ function LocationForm({ isNewLocation }) {
             fetchLocation();
         }, [id]);
     }
-
-    // State to manage the current location being added or edited
-    const [currentLocation, setCurrentLocation] = useState({
-        id: existingLocation ? existingLocation.id : null,
-        project_id: existingLocation ? existingLocation.project_id : id,
-        location_name: existingLocation ? existingLocation.location_name : '',
-        location_trigger: existingLocation ? existingLocation.location_trigger : '',
-        location_position: existingLocation ? existingLocation.location_position : '',
-        location_order: existingLocation ? existingLocation.location_order : 0,
-        username: 's4759487',
-        location_content: existingLocation ? existingLocation.location_content : '',
-        extra: existingLocation ? existingLocation.extra : '',
-        clue: existingLocation ? existingLocation.clue : '',
-        score_points: existingLocation ? existingLocation.score_points : 0,
-    });
 
     // Handle input changes for form fields
     const handleInputChange = (event) => {
