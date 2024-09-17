@@ -1,11 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { addLocation, updateLocation, getLocation } from '../api'; // Assuming you have API functions for locations
+import { useQuill } from 'react-quilljs';
+import 'quill/dist/quill.snow.css';
 
 function LocationForm({ isNewLocation }) {
     const navigate = useNavigate();
-    const { id } = useParams(); // this id can be either project_id (if adding new) or location_id (if editing)
+    const { id } = useParams(); // This ID can be either project_id (if adding new) or location_id (if editing)
     let existingLocation = null;
+
+    const theme = 'snow';
+
+    const modules = {
+        toolbar: [
+            ['bold', 'italic', 'underline', 'strike'], // Text styling options
+            [{ 'header': 1 }, { 'header': 2 }],         // Header formatting
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }], // List options
+            ['image'],                                  // Image option
+        ],
+    };
+
+    const placeholder = 'Compose an epic...';
+    const formats = ['bold', 'italic', 'underline', 'strike', 'header', 'list', 'bullet', 'image'];
+
+    const { quill, quillRef } = useQuill({ theme, modules, formats, placeholder });
 
     // State to manage the current location being added or edited
     const [currentLocation, setCurrentLocation] = useState({
@@ -21,7 +39,7 @@ function LocationForm({ isNewLocation }) {
         clue: existingLocation ? existingLocation.clue : '',
         score_points: existingLocation ? existingLocation.score_points : 0,
     });
-    
+
     // If this is not a new location, fetch the location details -> id is location_id
     if (!isNewLocation) {
         useEffect(() => {
@@ -42,12 +60,15 @@ function LocationForm({ isNewLocation }) {
                         clue: existingLocation.clue,
                         score_points: existingLocation.score_points,
                     });
+                    if (quill) {
+                        quill.clipboard.dangerouslyPasteHTML(existingLocation.location_content); // Load the existing content into the editor
+                    }
                 } catch (error) {
                     console.error('Error fetching location:', error);
                 }
             };
             fetchLocation();
-        }, [id]);
+        }, [id, quill]);
     }
 
     // Handle input changes for form fields
@@ -56,21 +77,60 @@ function LocationForm({ isNewLocation }) {
         setCurrentLocation({ ...currentLocation, [name]: value });
     };
 
+    // Convert image to Base64 for saving in JSON
+    const convertImageToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result); // Base64 result
+            reader.onerror = error => reject(error);
+            reader.readAsDataURL(file);
+        });
+    };
+
+    // Handle images in Quill editor by converting them to Base64
+    const handleImageInsertion = () => {
+        const input = document.createElement('input');
+        input.setAttribute('type', 'file');
+        input.setAttribute('accept', 'image/*');
+        input.click();
+
+        input.onchange = async () => {
+            const file = input.files[0];
+            const base64 = await convertImageToBase64(file);
+            const range = quill.getSelection();
+            quill.insertEmbed(range.index, 'image', base64);
+        };
+    };
+
+    useEffect(() => {
+        if (quill) {
+            // Add the image handler to Quill
+            quill.getModule('toolbar').addHandler('image', handleImageInsertion);
+        }
+    }, [quill]);
+
     // Handle form submission for adding or updating location
     const handleFormSubmit = async (event) => {
         event.preventDefault();
 
+        // Get the content from Quill editor, which includes images in Base64
+        const locationContent = quill.root.innerHTML;
+
+        const updatedLocation = {
+            ...currentLocation,
+            location_content: locationContent, // Save the editor content
+        };
+
         if (isNewLocation) {
-            delete currentLocation.id; // Remove the ID for new locations
-            await addLocation(currentLocation); // Add a new location via API
+            delete updatedLocation.id; // Remove the ID for new locations
+            await addLocation(updatedLocation); // Add a new location via API
             alert('Location added successfully!');
         } else {
-            delete currentLocation.id; // Remove the ID before updating
-            await updateLocation(id, currentLocation); // Update existing location
+            await updateLocation(id, updatedLocation); // Update existing location
             alert('Location updated successfully!');
         }
 
-        //navigate(`/locations/${project_id}`); // Redirect to the locations list after submission
+        navigate(`/locations/${currentLocation.project_id}`); // Redirect after submission
     };
 
     return (
@@ -125,12 +185,7 @@ function LocationForm({ isNewLocation }) {
 
                 <div className="mb-3">
                     <label>Location Content</label>
-                    <textarea
-                        name="location_content"
-                        className="form-control"
-                        value={currentLocation.location_content}
-                        onChange={handleInputChange}
-                    />
+                    <div ref={quillRef} style={{ minHeight: '200px', border: '1px solid #ccc' }} />
                 </div>
 
                 <div className="mb-3">

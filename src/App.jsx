@@ -26,8 +26,8 @@ import { getProjects, addProject, updateProject, deleteProject } from './api';
 function App() {
   const headerLinks = [
     { path: '/', text: 'Home' },
-    { path: '/projects', text: 'Projects' },
-    { path: '/recipes', text: 'Recipes' }
+    { path: '/projects', text: 'Projects' }
+    // { path: '/recipes', text: 'Recipes' }
   ];
 
   const footerLinks = [
@@ -88,8 +88,8 @@ function App() {
               <Route path="/locations/:project_id" element={<LocationsList />} />
               <Route path="/location/add/:id" element={<LocationForm isNewLocation={true} />} />
               <Route path="/location/edit/:id" element={<LocationForm isNewLocation={false} />} />
-              <Route path="/recipes" element={<RecipeList recipes={recipes} />} />
-              <Route path="/recipe/:id" element={<Recipe recipes={recipes} />} />
+              {/* <Route path="/recipes" element={<RecipeList recipes={recipes} />} />
+              <Route path="/recipe/:id" element={<Recipe recipes={recipes} />} /> */}
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
