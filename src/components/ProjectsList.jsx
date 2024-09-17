@@ -73,15 +73,18 @@ function ProjectList() {
 
                             {/* Add buttons for Edit, View Locations, and Delete */}
                             <div className="d-flex align-items-center">
-                                <Link to={`/project/edit/${project.id}`} className="btn btn-warning mx-1">
+                                <Link to={`/project/edit/${project.id}`} 
+                                    preventScrollReset={true} 
+                                    reloadDocument={true}
+                                    className="btn btn-warning mx-1">
                                     Edit
                                 </Link>
 
                                 {/* View Locations button */}
                                 <Link
                                     to={`/locations/${project.id}`}
-                                    className="btn btn-light mx-1 text-decoration-none"
-                                >
+                                    preventScrollReset={true}
+                                    className="btn btn-light mx-1 text-decoration-none">
                                     View Locations
                                 </Link>
 

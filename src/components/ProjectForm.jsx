@@ -1,35 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { addProject, updateProject, getProjects } from '../api';
+import { addProject, updateProject, getProject } from '../api';
 
 function ProjectForm({ isNewProject }) {
     const navigate = useNavigate();
     const { id } = useParams();
     let existingProject = null;
-    // if isNewProject is false, call GET /projects/:id to get the project details
-    if (!isNewProject) {
-        useEffect(() => {
-            const fetchProject = async () => {
-                try {
-                    const data = await getProjects(id);
-                    existingProject = data[0];
-                    setCurrentProject({
-                        id: existingProject.id,
-                        title: existingProject.title,
-                        description: existingProject.description,
-                        is_published: existingProject.is_published,
-                        participant_scoring: existingProject.participant_scoring,
-                        instructions: existingProject.instructions,
-                        initial_clue: existingProject.initial_clue,
-                        homescreen_display: existingProject.homescreen_display
-                    });
-                } catch (error) {
-                    console.error('Error fetching project:', error);
-                }
-            };
-            fetchProject();
-        }, [id]);
-    }
+    let firstRender = true;
 
     // State to manage the current project being added or edited
     const [currentProject, setCurrentProject] = useState({
@@ -43,16 +20,49 @@ function ProjectForm({ isNewProject }) {
         homescreen_display: existingProject ? existingProject.homescreen_display : 'Display initial clue'
     });
 
+    // State to store the initial form data for comparison
+    // if isNewProject is false, call GET /projects/:id to get the project details
+    const [initialProject, setInitialProject] = useState(null);
+    const fetchProject = async () => {
+        try {
+            const data = await getProject(id);
+            existingProject = data[0];
+            setCurrentProject({
+                id: existingProject.id,
+                title: existingProject.title,
+                description: existingProject.description,
+                is_published: existingProject.is_published,
+                participant_scoring: existingProject.participant_scoring,
+                instructions: existingProject.instructions,
+                initial_clue: existingProject.initial_clue,
+                homescreen_display: existingProject.homescreen_display
+            });
+            setInitialProject({existingProject});
+        } catch (error) {
+            console.error('Error fetching project:', error);
+        }
+    };
+
+    // if isNewProject is false, call GET /projects/:id to get the project details
+    if (!isNewProject) {
+        useEffect(() => {
+            fetchProject();
+            setInitialProject(existingProject);
+            isNewProject = false; // Set isNewProject to false after fetching the project
+            
+        }, [id]);
+    }
+
     // Handle input change for form fields
     const handleInputChange = (event) => {
-        const { name, value,type, checked } = event.target;
+        const { name, value, type, checked } = event.target;
         setCurrentProject({ ...currentProject, [name]: type === 'checkbox' ? checked : value });
     };
 
     // Handle form submission to add or update project
     const handleFormSubmit = async (event) => {
         event.preventDefault(); 
-
+        setInitialProject(currentProject);
         if (isNewProject) {
             // remove id from currentProject
             delete currentProject.id; // Remove the ID before adding a new project
@@ -60,12 +70,43 @@ function ProjectForm({ isNewProject }) {
             await addProject(currentProject);
             alert('Project added successfully!');
         } else {
+            delete currentProject.id; // Prevent updating the primary key
             await updateProject(id, currentProject);
             alert('Project updated successfully!');
         }
+        
+        //navigate('/projects'); // Redirect to the projects list after submission
+    };
 
-        // pop up message        
-        navigate('/projects'); // Redirect to the projects list after submission
+    // Compare currentProject with initialProject to check if the form has unsaved changes
+    const hasUnsavedChanges = () => {
+        return JSON.stringify(currentProject) !== JSON.stringify(initialProject);
+    };
+    // Handle the Cancel button with confirmation if there are unsaved changes
+    const handleCancelClick = (event) => {
+        if (hasUnsavedChanges()) {
+            const confirmLeave = window.confirm(
+                'You have unsaved changes. Are you sure you want to leave without saving?'
+            );
+            if (!confirmLeave) {
+                event.preventDefault();
+            }
+        }
+
+        //clean up the form
+        setCurrentProject({
+            id: null,
+            title: '',
+            is_published: false,
+            participant_scoring: 'Number of Scanned QR Codes',
+            username: 's4759487',
+            instructions: '',
+            initial_clue: '',
+            homescreen_display: 'Display initial clue'
+        });
+
+        // reset the page to the initial state
+        setInitialProject(null);
     };
 
     return (
@@ -154,7 +195,7 @@ function ProjectForm({ isNewProject }) {
                 <button type="submit" className="btn btn-primary">
                     {currentProject.id ? 'Save Changes' : 'Add Project'}
                 </button>
-                <Link to="/projects" className="btn btn-secondary ms-2">Cancel</Link>
+                <Link to="/projects" className="btn btn-secondary ms-2"  onClick={handleCancelClick} >Cancel</Link>
             </form>
         </div>
     );

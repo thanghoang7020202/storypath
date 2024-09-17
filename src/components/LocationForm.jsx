@@ -65,6 +65,7 @@ function LocationForm({ isNewLocation }) {
             await addLocation(currentLocation); // Add a new location via API
             alert('Location added successfully!');
         } else {
+            delete currentLocation.id; // Remove the ID before updating
             await updateLocation(id, currentLocation); // Update existing location
             alert('Location updated successfully!');
         }
