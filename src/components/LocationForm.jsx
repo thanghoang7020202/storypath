@@ -21,7 +21,7 @@ function LocationForm({ isNewLocation }) {
     };
 
     const placeholder = 'Compose an epic...';
-    const formats = ['bold', 'italic', 'underline', 'strike', 'header', 'list', 'bullet', 'image'];
+    const formats = ['bold', 'italic', 'underline', 'strike', 'header', 'list', 'image'];
 
     const { quill, quillRef } = useQuill({ theme, modules, formats, placeholder });
 
@@ -39,6 +39,7 @@ function LocationForm({ isNewLocation }) {
         clue: existingLocation ? existingLocation.clue : '',
         score_points: existingLocation ? existingLocation.score_points : 0,
     });
+    const [initialLocation, setInitialLocation] = useState(currentLocation);
 
     // If this is not a new location, fetch the location details -> id is location_id
     if (!isNewLocation) {
@@ -63,6 +64,7 @@ function LocationForm({ isNewLocation }) {
                     if (quill) {
                         quill.clipboard.dangerouslyPasteHTML(existingLocation.location_content); // Load the existing content into the editor
                     }
+                    setInitialLocation(existingLocation);
                 } catch (error) {
                     console.error('Error fetching location:', error);
                 }
@@ -75,6 +77,22 @@ function LocationForm({ isNewLocation }) {
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setCurrentLocation({ ...currentLocation, [name]: value });
+    };
+
+    // Check if there are unsaved changes in the form
+    const hasUnsavedChanges = () => {
+        return JSON.stringify(currentLocation) !== JSON.stringify(initialLocation);
+    };
+
+    const handleCancelClick = (event) => {
+        if (hasUnsavedChanges()) {
+            const confirmLeave = window.confirm(
+                'You have unsaved changes. Are you sure you want to leave without saving?'
+            );
+            if (!confirmLeave) {
+                event.preventDefault();
+            }
+        }
     };
 
     // Convert image to Base64 for saving in JSON
@@ -129,8 +147,9 @@ function LocationForm({ isNewLocation }) {
             await updateLocation(id, updatedLocation); // Update existing location
             alert('Location updated successfully!');
         }
-
-        navigate(`/locations/${currentLocation.project_id}`); // Redirect after submission
+        setInitialLocation(updatedLocation);
+        
+        //navigate(`/locations/${currentLocation.project_id}`); // Redirect after submission
     };
 
     return (
@@ -222,7 +241,7 @@ function LocationForm({ isNewLocation }) {
                 <button type="submit" className="btn btn-primary">
                     {currentLocation.id ? 'Save Changes' : 'Add Location'}
                 </button>
-                <Link to={`/locations/${id}`} className="btn btn-secondary ms-2"> Cancel </Link>
+                <Link to={`/locations/${id}`} className="btn btn-secondary ms-2" onClick={handleCancelClick}> Cancel </Link>
             </form>
         </div>
     );

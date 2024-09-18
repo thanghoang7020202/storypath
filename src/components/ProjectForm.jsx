@@ -22,7 +22,8 @@ function ProjectForm({ isNewProject }) {
 
     // State to store the initial form data for comparison
     // if isNewProject is false, call GET /projects/:id to get the project details
-    const [initialProject, setInitialProject] = useState(null);
+    const [initialProject, setInitialProject] = useState(currentProject);
+
     const fetchProject = async () => {
         try {
             const data = await getProject(id);
@@ -37,7 +38,7 @@ function ProjectForm({ isNewProject }) {
                 initial_clue: existingProject.initial_clue,
                 homescreen_display: existingProject.homescreen_display
             });
-            setInitialProject({existingProject});
+            setInitialProject({currentProject});
         } catch (error) {
             console.error('Error fetching project:', error);
         }
@@ -47,9 +48,7 @@ function ProjectForm({ isNewProject }) {
     if (!isNewProject) {
         useEffect(() => {
             fetchProject();
-            setInitialProject(existingProject);
             isNewProject = false; // Set isNewProject to false after fetching the project
-            
         }, [id]);
     }
 
@@ -62,7 +61,6 @@ function ProjectForm({ isNewProject }) {
     // Handle form submission to add or update project
     const handleFormSubmit = async (event) => {
         event.preventDefault(); 
-        setInitialProject(currentProject);
         if (isNewProject) {
             // remove id from currentProject
             delete currentProject.id; // Remove the ID before adding a new project
@@ -74,7 +72,7 @@ function ProjectForm({ isNewProject }) {
             await updateProject(id, currentProject);
             alert('Project updated successfully!');
         }
-        
+        setInitialProject(currentProject);
         //navigate('/projects'); // Redirect to the projects list after submission
     };
 
@@ -92,21 +90,6 @@ function ProjectForm({ isNewProject }) {
                 event.preventDefault();
             }
         }
-
-        //clean up the form
-        setCurrentProject({
-            id: null,
-            title: '',
-            is_published: false,
-            participant_scoring: 'Number of Scanned QR Codes',
-            username: 's4759487',
-            instructions: '',
-            initial_clue: '',
-            homescreen_display: 'Display initial clue'
-        });
-
-        // reset the page to the initial state
-        setInitialProject(null);
     };
 
     return (
