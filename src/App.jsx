@@ -9,6 +9,7 @@ import ProjectList from './components/ProjectsList';
 import ProjectForm from './components/ProjectForm';
 import LocationsList from './components/LocationsList';
 import LocationForm from './components/LocationForm';
+import Preview from './components/Preview';
 import { ProjectsContext } from './data/ProjectsContext';
 
 // Example Recipe imports
@@ -23,6 +24,7 @@ import PrivacyPolicy from './components/PrivacyPolicy';
 
 // Importing API functions from api.js
 import { getProjects, addProject, updateProject, deleteProject } from './api';
+
 function App() {
   const headerLinks = [
     { path: '/', text: 'Home' },
@@ -88,6 +90,7 @@ function App() {
               <Route path="/location/:id" element={<LocationsList />} />
               <Route path="/location/add/:id" element={<LocationForm isNewLocation={true} />} />
               <Route path="/location/edit/:id" element={<LocationForm isNewLocation={false} />} />
+              <Route path="/projects/previews/:id" element={<Preview />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />

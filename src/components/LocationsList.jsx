@@ -162,7 +162,7 @@ function LocationsList() {
             {/* Buttons for printing QR codes and previewing the project */}
             <div className="mt-4">
                 <button className="btn btn-warning">Print QR Codes for All</button>
-                <Link to="/location/preview" className="btn btn-success ms-3">
+                <Link to={`/projects/previews/${id}`} className="btn btn-success ms-3">
                     Preview
                 </Link>
             </div>
