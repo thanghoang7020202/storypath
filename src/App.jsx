@@ -84,7 +84,7 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/projects" element={<ProjectList projects={projects} />} />
               <Route path="/project/add" element={<ProjectForm isNewProject={true}/>} />
-              <Route path="/project/edit/:id" element={<ProjectForm isNewProject={false} />}/>
+              <Route path="/project/edit/:id" element={<ProjectForm isNewProject={false} />} />
               <Route path="/location/:id" element={<LocationsList />} />
               <Route path="/location/add/:id" element={<LocationForm isNewLocation={true} />} />
               <Route path="/location/edit/:id" element={<LocationForm isNewLocation={false} />} />

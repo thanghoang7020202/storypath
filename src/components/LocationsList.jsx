@@ -9,7 +9,7 @@ import { getLocations, deleteLocation, updateLocation, getProject } from '../api
 function LocationsList() {
     const [locations, setLocations] = useState([]);
     const { id } = useParams();
-    let project_title = '';
+    const [project_title, setProjectTitle] = useState('');
 
     // Fetch locations from the API when the component mounts
     useEffect(() => {
@@ -20,12 +20,10 @@ function LocationsList() {
                 
                 // Filter locations by project_id if it is provided
                 const project = await getProject(id);
-                try {
-                    project_title = project[0].title;
-                } catch (error) {
-                    console.error('Error fetching project:', error);
-                }
-                data = data.filter((location) => location.project_id === projectId);
+                
+
+                data = data.filter((location) => location.project_id === project[0].id);
+                setProjectTitle(project[0].title);
                 setLocations(data);
                 // Set the state with the fetched locations
             } catch (error) {
@@ -34,8 +32,8 @@ function LocationsList() {
         };
 
         fetchLocationsAndProject(); // Call the async function
-    }, [id]); // Empty dependency array ensures this runs once on mount
-
+    }, [id]); // Call the async function when the project ID changes
+    
     // Handle deleting a location
     const handleDelete = async (locationId) => {
         try {

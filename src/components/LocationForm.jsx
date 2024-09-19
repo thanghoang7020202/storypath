@@ -259,7 +259,7 @@ function LocationForm({ isNewLocation }) {
                 <button type="submit" className="btn btn-primary">
                     {currentLocation.id ? 'Save Changes' : 'Add Location'}
                 </button>
-                <Link to={`/locations/${id}`} className="btn btn-secondary ms-2" onClick={handleCancelClick}> Cancel </Link>
+                <Link to={`/location/${currentLocation.project_id}`} className="btn btn-secondary ms-2" onClick={handleCancelClick}> Cancel </Link>
             </form>
         </div>
     );
