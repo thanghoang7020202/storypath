@@ -94,7 +94,7 @@ function ProjectForm({ isNewProject }) {
 
     return (
         <div className="container">
-            <h2>{currentProject.id ? 'Edit Project' : 'Add Project'}</h2>
+            <h2>{currentProject.id ? 'Edit Project of id: ' + currentProject.id : 'Add Project'}</h2>
             <form onSubmit={handleFormSubmit}>
                 <div className="mb-3">
                     <label>Title</label>
@@ -147,7 +147,7 @@ function ProjectForm({ isNewProject }) {
                         onChange={handleInputChange}
                     >
                         <option value="Display initial clue">Display initial clue</option>
-                        <option value="Display nothing">Display nothing</option>
+                        <option value="Display all locations">Display all locations</option>
                     </select>
                 </div>
 
@@ -160,7 +160,7 @@ function ProjectForm({ isNewProject }) {
                         onChange={handleInputChange}
                     >
                         <option value="Number of Scanned QR Codes">Number of Scanned QR Codes</option>
-                        <option value="Time Taken to Complete">Time Taken to Complete</option>
+                        <option value="Number of Locations Entered">Number of Locations Entered</option>
                     </select>
                 </div>
 

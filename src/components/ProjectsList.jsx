@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { ProjectsContext } from '../data/ProjectsContext';
 import { deleteProject, getProjects} from '../api';
 
 /**
@@ -82,7 +81,7 @@ function ProjectList() {
 
                                 {/* View Locations button */}
                                 <Link
-                                    to={`/locations/${project.id}`}
+                                    to={`/location/${project.id}`}
                                     preventScrollReset={true}
                                     className="btn btn-light mx-1 text-decoration-none">
                                     View Locations

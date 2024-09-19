@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { getLocations, deleteLocation } from '../api'; // Assuming API methods for fetching and deleting locations
+import { getLocations, deleteLocation, updateLocation, getProject } from '../api'; // Assuming API methods for fetching, deleting, and updating locations
 
 /**
  * LocationsList component for displaying the list of locations.
@@ -8,26 +8,33 @@ import { getLocations, deleteLocation } from '../api'; // Assuming API methods f
  */
 function LocationsList() {
     const [locations, setLocations] = useState([]);
-    const { project_id } = useParams();
+    const { id } = useParams();
     let project_title = '';
 
     // Fetch locations from the API when the component mounts
     useEffect(() => {
-        const fetchLocations = async () => {
+        const fetchLocationsAndProject = async () => {
             try {
-                const data = await getLocations(); // Fetch locations via API call
-
+                let data = await getLocations(); // Fetch locations via API call
+                
+                
                 // Filter locations by project_id if it is provided
-                //data = data.filter((location) => location.project_id === project_id);
-
-                setLocations(data); // Set the state with the fetched locations
+                const project = await getProject(id);
+                try {
+                    project_title = project[0].title;
+                } catch (error) {
+                    console.error('Error fetching project:', error);
+                }
+                data = data.filter((location) => location.project_id === projectId);
+                setLocations(data);
+                // Set the state with the fetched locations
             } catch (error) {
                 console.error('Error fetching locations:', error);
             }
         };
 
-        fetchLocations(); // Call the async function
-    }, []); // Empty dependency array ensures this runs once on mount
+        fetchLocationsAndProject(); // Call the async function
+    }, [id]); // Empty dependency array ensures this runs once on mount
 
     // Handle deleting a location
     const handleDelete = async (locationId) => {
@@ -41,17 +48,66 @@ function LocationsList() {
         }
     };
 
+    // Function to move a location up by decreasing its location_order
+    const handleMoveUp = async (index) => {
+        if (index === 0) return; // Can't move the first item up
+
+        const updatedLocations = [...locations];
+        const currentLocation = updatedLocations[index];
+        const previousLocation = updatedLocations[index - 1];
+
+        // Swap the orders
+        const tempOrder = currentLocation.location_order;
+        currentLocation.location_order = previousLocation.location_order;
+        previousLocation.location_order = tempOrder;
+
+        // Update the locations in the state
+        setLocations(sortLocations(updatedLocations));
+
+        // Update both locations on the server
+        await updateLocation(currentLocation.id, currentLocation);
+        await updateLocation(previousLocation.id, previousLocation);
+    };
+
+    // Function to move a location down by increasing its location_order
+    const handleMoveDown = async (index) => {
+        if (index === locations.length - 1) return; // Can't move the last item down
+
+        const updatedLocations = [...locations];
+        const currentLocation = updatedLocations[index];
+        const nextLocation = updatedLocations[index + 1];
+
+        // Swap the orders
+        const tempOrder = currentLocation.location_order;
+        currentLocation.location_order = nextLocation.location_order;
+        nextLocation.location_order = tempOrder;
+
+        // Update the locations in the state
+        setLocations(sortLocations(updatedLocations));
+
+        // Update both locations on the server
+        await updateLocation(currentLocation.id, currentLocation);
+        await updateLocation(nextLocation.id, nextLocation);
+    };
+
+    // Sort locations by location_order
+    const sortLocations = (locations) => {
+        return locations.sort((a, b) => a.location_order - b.location_order);
+    };
+
     return (
         <div className="container-md py-5">
             {/* Add a heading and a button to add a new location */}
             <div className="d-flex justify-content-between align-items-center mb-4">
-                <h1 className="fw-bold">Exploring UQ - Locations for {project_id}</h1>
-                <Link to={`/location/add/${project_id}`} className="btn btn-primary btn-lg"> Add Location</Link>
+                <h1 className="fw-bold">Locations for Project: {project_title}</h1>
+                <Link to={`/location/add/${id}`} className="btn btn-primary btn-lg">
+                    Add Location
+                </Link>
             </div>
 
             <div className="list-group">
                 {locations.length > 0 ? (
-                    locations.map((location) => (
+                    locations.map((location, index) => (
                         <div
                             key={location.id}
                             className="list-group-item d-flex justify-content-between align-items-start mb-3"
@@ -68,10 +124,22 @@ function LocationsList() {
                                 <p className="text-muted">Points: {location.score_points}</p>
                             </div>
 
-                            {/* Add buttons for Edit, Delete, and Print QR Code */}
+                            {/* Add buttons for Edit, Delete, Move Up, Move Down, and Print QR Code */}
                             <div className="d-flex align-items-center">
-                                <button className="btn btn-secondary mx-1">↑</button> {/* Move up button */}
-                                <button className="btn btn-secondary mx-1">↓</button> {/* Move down button */}
+                                <button
+                                    className="btn btn-secondary mx-1"
+                                    onClick={() => handleMoveUp(index)}
+                                    disabled={index === 0} // Disable "Up" button for the first item
+                                >
+                                    ↑
+                                </button>
+                                <button
+                                    className="btn btn-secondary mx-1"
+                                    onClick={() => handleMoveDown(index)}
+                                    disabled={index === locations.length - 1} // Disable "Down" button for the last item
+                                >
+                                    ↓
+                                </button>
 
                                 <Link to={`/location/edit/${location.id}`} className="btn btn-warning mx-1">
                                     Edit
@@ -96,7 +164,9 @@ function LocationsList() {
             {/* Buttons for printing QR codes and previewing the project */}
             <div className="mt-4">
                 <button className="btn btn-warning">Print QR Codes for All</button>
-                <Link to="/location/preview" className="btn btn-success ms-3">Preview</Link>
+                <Link to="/location/preview" className="btn btn-success ms-3">
+                    Preview
+                </Link>
             </div>
         </div>
     );

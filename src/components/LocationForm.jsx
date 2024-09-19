@@ -120,6 +120,16 @@ function LocationForm({ isNewLocation }) {
         };
     };
 
+    // Check if the location position is in the correct format
+    function isValidLocationPosition(locationPosition) {
+        // Regular expression to match the format "(number,number)"
+        const regex = /^\(\d+,\d+\)$/;
+        
+        // Test the location position against the regex pattern
+        return regex.test(locationPosition);
+    }
+    
+
     useEffect(() => {
         if (quill) {
             // Add the image handler to Quill
@@ -129,8 +139,13 @@ function LocationForm({ isNewLocation }) {
 
     // Handle form submission for adding or updating location
     const handleFormSubmit = async (event) => {
-        event.preventDefault();
+        event.preventDefault(); // Prevent the default form submission behavior
 
+        // check if the location_position is in the correct format (latitude, longitude) where latitude and longitude are numbers
+        if (!isValidLocationPosition(currentLocation.location_position)) {
+            alert("Invalid format for Location Position. Use (number,number) format.");
+            return;
+        }
         // Get the content from Quill editor, which includes images in Base64
         const locationContent = quill.root.innerHTML;
 
@@ -154,7 +169,7 @@ function LocationForm({ isNewLocation }) {
 
     return (
         <div className="container">
-            <h2>{currentLocation.id ? 'Edit Location' : 'Add Location for Project ID: ' + id}</h2>
+            <h2>{currentLocation.id ? 'Edit Location for Project ID: ' + currentLocation.project_id : 'Add Location for Project ID: ' + id}</h2>
             <form onSubmit={handleFormSubmit}>
                 <div className="mb-3">
                     <label>Location Name</label>
@@ -170,14 +185,17 @@ function LocationForm({ isNewLocation }) {
 
                 <div className="mb-3">
                     <label>Location Trigger</label>
-                    <input
-                        type="text"
+                    <select
                         name="location_trigger"
                         className="form-control"
                         value={currentLocation.location_trigger}
                         onChange={handleInputChange}
                         required
-                    />
+                    >
+                        <option value="Location Entry">Location Entry</option>
+                        <option value="QR Code Scan">QR Code Scan</option>
+                        <option value="Both Location Entry and QR Code Scan">Both Location Entry and QR Code Scan</option>
+                    </select>
                 </div>
 
                 <div className="mb-3">

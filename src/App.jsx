@@ -85,11 +85,9 @@ function App() {
               <Route path="/projects" element={<ProjectList projects={projects} />} />
               <Route path="/project/add" element={<ProjectForm isNewProject={true}/>} />
               <Route path="/project/edit/:id" element={<ProjectForm isNewProject={false} />}/>
-              <Route path="/locations/:project_id" element={<LocationsList />} />
+              <Route path="/location/:id" element={<LocationsList />} />
               <Route path="/location/add/:id" element={<LocationForm isNewLocation={true} />} />
               <Route path="/location/edit/:id" element={<LocationForm isNewLocation={false} />} />
-              {/* <Route path="/recipes" element={<RecipeList recipes={recipes} />} />
-              <Route path="/recipe/:id" element={<Recipe recipes={recipes} />} /> */}
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
