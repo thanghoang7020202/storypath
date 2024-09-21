@@ -120,10 +120,10 @@ function LocationForm({ isNewLocation }) {
         };
     };
 
-    // Check if the location position is in the correct format
+    // Validate the location position format (latitude, longitude)
     function isValidLocationPosition(locationPosition) {
-        // Regular expression to match the format "(number,number)"
-        const regex = /^\(\d+,\d+\)$/;
+        // Regular expression for validating latitude and longitude in the format (lat, long)
+        const regex = /^\s*\(\s*[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)\s*\)\s*$/;
         
         // Test the location position against the regex pattern
         return regex.test(locationPosition);

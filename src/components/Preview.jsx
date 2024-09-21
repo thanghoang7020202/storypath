@@ -8,6 +8,7 @@ const Preview = () => {
     const [locations, setLocations] = useState([]);
     const [selectedLocation, setSelectedLocation] = useState('Homescreen');
     const [points, setPoints] = useState(0);
+    const [totalPoints, setTotalPoints] = useState(0);
     const [locationsVisited, setLocationsVisited] = useState([]);
 
     useEffect(() => {
@@ -17,6 +18,13 @@ const Preview = () => {
             locationsData = locationsData.filter((location) => location.project_id === projectData[0].id);
             setProject(projectData[0]);  // Assuming projectData is an array
             setLocations(locationsData);
+            
+            // Calculate total points
+            let totalPoints = 0;
+            locationsData.forEach(location => {
+                totalPoints += location.score_points;
+            });
+            setTotalPoints(totalPoints);
         };
         fetchProjectAndLocations();
     }, [id]);
@@ -30,7 +38,14 @@ const Preview = () => {
         if (newLocation !== 'Homescreen') {
             const location = locations.find((loc) => loc.location_name === newLocation);
             const newLocationsVisited = new Set([...locationsVisited, location.location_name]);
-            setPoints(prevPoints => prevPoints + (location?.score_points || 0));
+            const point = () => {
+                // if the location has not been visited before, add the points
+                if (!locationsVisited.includes(location.location_name)) {
+                    return points + location.score_points;
+                }
+                return points;
+            };
+            setPoints(point());
             setLocationsVisited(Array.from(newLocationsVisited));
         } else {
             setPoints(0);
@@ -99,7 +114,7 @@ const Preview = () => {
                         className="btn text-white"
                         style={{ backgroundColor: '#8A2BE2', width: '48%' }}
                     >
-                        Points: {points} / 20
+                        Points: {points} / {totalPoints}
                     </button>
                     <button
                         className="btn text-white"
