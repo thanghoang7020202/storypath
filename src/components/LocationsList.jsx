@@ -10,6 +10,7 @@ function LocationsList() {
     const [locations, setLocations] = useState([]);                                 // State to manage locations
     const { id } = useParams();                                                     // Get the project ID from the URL
     const [project_title, setProjectTitle] = useState('');                          // State to store the project title
+    const navigate = useNavigate();                                                 // Use navigate to redirect to QRCode component
 
     /**
      * Fetch locations from the API when the component mounts.
@@ -18,16 +19,10 @@ function LocationsList() {
         const fetchLocationsAndProject = async () => {
             try {
                 let data = await getLocations(); // Fetch locations via API call
-                
-                
-                // Filter locations by project_id if it is provided
-                const project = await getProject(id);
-                
-
+                const project = await getProject(id); // Fetch project details by project id
                 data = data.filter((location) => location.project_id === project[0].id);
                 setProjectTitle(project[0].title);
                 setLocations(data);
-                // Set the state with the fetched locations
             } catch (error) {
                 console.error('Error fetching locations:', error);
             }
@@ -35,7 +30,7 @@ function LocationsList() {
 
         fetchLocationsAndProject(); // Call the async function
     }, [id]); // Call the async function when the project ID changes
-    
+
     /**
      * Function to delete a location.
      * @param {number} locationId - The ID of the location to delete
@@ -54,12 +49,9 @@ function LocationsList() {
     /**
      * Function to move a location up by decreasing its location_order.
      * @param {number} index - The index of the location to move up
-     * @returns {void}
      */
     const handleMoveUp = async (index) => {
         if (index === 0) return; // Can't move the first item up
-
-        // Create a copy of the locations array
         const updatedLocations = [...locations];
         const currentLocation = updatedLocations[index];
         const previousLocation = updatedLocations[index - 1];
@@ -80,11 +72,9 @@ function LocationsList() {
     /**
      * Function to move a location down by increasing its location_order.
      * @param {number} index - The index of the location to move down
-     * @returns {void}
      */
     const handleMoveDown = async (index) => {
         if (index === locations.length - 1) return; // Can't move the last item down
-
         const updatedLocations = [...locations];
         const currentLocation = updatedLocations[index];
         const nextLocation = updatedLocations[index + 1];
@@ -109,9 +99,20 @@ function LocationsList() {
 
     return (
         <div className="container-md py-5">
-            {/* Add a heading and a button to add a new location */}
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h1 className="fw-bold">Locations for Project: {project_title}</h1>
+
+                {/* Buttons for printing QR codes and previewing the project */}
+                <div className="d-flex">
+                    <Link to={`/qrcode/all/${id}`} className="btn btn btn-light"> Print QR Codes for All </Link>
+                    <Link to={`/projects/previews/${id}`} className="btn btn btn-light ms-3">
+                        Preview
+                    </Link>
+                </div>
+            </div>
+
+            {/* Add a heading and a button to add a new location */}
+            <div className="mt-4 mb-3">
                 <Link to={`/location/add/${id}`} className="btn btn-primary btn-lg">
                     Add Location
                 </Link>
@@ -137,7 +138,7 @@ function LocationsList() {
                                 <p className="text-muted">Points: {location.score_points}</p>
                             </div>
 
-                            {/* Add buttons for Edit, Delete, Move Up, Move Down, and Print QR Code */}
+                            {/* Add buttons for Edit, Delete, Move Up, Move Down, and view QR Code */}
                             <div className="d-flex align-items-center">
                                 <button
                                     className="btn btn-secondary mx-1"
@@ -165,21 +166,15 @@ function LocationsList() {
                                     Delete
                                 </button>
 
-                                <button className="btn btn-light mx-1">Print QR Code</button>
+                                <button className="btn btn-light mx-1" onClick={() => navigate(`/qrcode/single/${location.id}`)}>
+                                    View QR Code
+                                </button>
                             </div>
                         </div>
                     ))
                 ) : (
                     <p>No locations available.</p>
                 )}
-            </div>
-
-            {/* Buttons for printing QR codes and previewing the project */}
-            <div className="mt-4">
-                <button className="btn btn-warning">Print QR Codes for All</button>
-                <Link to={`/projects/previews/${id}`} className="btn btn-success ms-3">
-                    Preview
-                </Link>
             </div>
         </div>
     );

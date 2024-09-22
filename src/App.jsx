@@ -12,6 +12,7 @@ import ProjectForm from './components/ProjectForm';
 import LocationsList from './components/LocationsList';
 import LocationForm from './components/LocationForm';
 import Preview from './components/Preview';
+import QRCodeComponent from './components/QRCode';
 
 // Importing the ProjectsContext to manage projects
 import { ProjectsContext } from './data/ProjectsContext';
@@ -89,6 +90,8 @@ function App() {
               <Route path="/location/:id" element={<LocationsList />} />
               <Route path="/location/add/:id" element={<LocationForm isNewLocation={true} />} />
               <Route path="/location/edit/:id" element={<LocationForm isNewLocation={false} />} />
+              <Route path="/qrcode/all/:id" element={<QRCodeComponent isSingle={false} />} />
+              <Route path="/qrcode/single/:id" element={<QRCodeComponent isSingle={true} />} />
               <Route path="/projects/previews/:id" element={<Preview />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
