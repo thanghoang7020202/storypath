@@ -1,3 +1,5 @@
+// Endpoint testing using REST Client extension in VSCode (from CSSE6400 assignment)
+
 @baseUrl = https://0b5ff8b0.uqcloud.net/
 @jwtToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic3R1ZGVudCIsInVzZXJuYW1lIjoiczQ3NTk0ODcifQ.PYGpsxjuzysuzHIad-l5VO9MbEYNBhx9X5QSfq4lMuw
 

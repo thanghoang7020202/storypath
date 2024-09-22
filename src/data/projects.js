@@ -1,5 +1,5 @@
+// test data for projects (old -> to be removed)
 import { useState } from 'react';
-
 
 //Initial projects data
 export const projectsData = [

@@ -4,26 +4,31 @@ import { addLocation, updateLocation, getLocation } from '../api'; // Assuming y
 import { useQuill } from 'react-quilljs';
 import 'quill/dist/quill.snow.css';
 
+/**
+ * LocationForm component to add or edit a location.
+ * @param {Object} props - The props object (contains isNewLocation flag)
+ * @returns JSX element
+ */
 function LocationForm({ isNewLocation }) {
-    const navigate = useNavigate();
-    const { id } = useParams(); // This ID can be either project_id (if adding new) or location_id (if editing)
-    let existingLocation = null;
+    const navigate = useNavigate();                                         // Hook to navigate to a different URL
+    const { id } = useParams();                                             // This ID can be either project_id (if adding new) or location_id (if editing)
+    let existingLocation = null;                                            // Variable to store the existing location
 
-    const theme = 'snow';
+    const theme = 'snow';                                                   // Quill editor theme
 
     const modules = {
         toolbar: [
-            ['bold', 'italic', 'underline', 'strike'], // Text styling options
-            [{ 'header': 1 }, { 'header': 2 }],         // Header formatting
-            [{ 'list': 'ordered' }, { 'list': 'bullet' }], // List options
-            ['image'],                                  // Image option
+            ['bold', 'italic', 'underline', 'strike'],                      // Text styling options
+            [{ 'header': 1 }, { 'header': 2 }],                             // Header formatting
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }],                  // List options
+            ['image'],                                                      // Image option
         ],
     };
 
-    const placeholder = 'Compose an epic...';
-    const formats = ['bold', 'italic', 'underline', 'strike', 'header', 'list', 'image'];
+    const placeholder = 'Compose an epic...';                               // Placeholder text for the editor
+    const formats = ['bold', 'italic', 'underline', 'strike', 'header', 'list', 'image']; // Quill editor formats
 
-    const { quill, quillRef } = useQuill({ theme, modules, formats, placeholder });
+    const { quill, quillRef } = useQuill({ theme, modules, formats, placeholder }); // Quill editor instance
 
     // State to manage the current location being added or edited
     const [currentLocation, setCurrentLocation] = useState({
@@ -39,7 +44,7 @@ function LocationForm({ isNewLocation }) {
         clue: existingLocation ? existingLocation.clue : '',
         score_points: existingLocation ? existingLocation.score_points : 0,
     });
-    const [initialLocation, setInitialLocation] = useState(currentLocation);
+    const [initialLocation, setInitialLocation] = useState(currentLocation);    // State to store the initial form data for comparison
 
     // If this is not a new location, fetch the location details -> id is location_id
     if (!isNewLocation) {
@@ -73,17 +78,29 @@ function LocationForm({ isNewLocation }) {
         }, [id, quill]);
     }
 
-    // Handle input changes for form fields
+    /**
+     * Handle input change for form fields.
+     * @param {Object} event - The event object
+     * @returns {void}
+     */
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setCurrentLocation({ ...currentLocation, [name]: value });
     };
 
-    // Check if there are unsaved changes in the form
+    /**
+     * Check if there are unsaved changes in the form.
+     * @returns {boolean} - True if there are unsaved changes, false otherwise
+     */
     const hasUnsavedChanges = () => {
         return JSON.stringify(currentLocation) !== JSON.stringify(initialLocation);
     };
 
+    /**
+     * Handle the cancel button click event.
+     * @param {Object} event - The event object
+     * @returns {void}
+     */
     const handleCancelClick = (event) => {
         if (hasUnsavedChanges()) {
             const confirmLeave = window.confirm(
@@ -95,7 +112,11 @@ function LocationForm({ isNewLocation }) {
         }
     };
 
-    // Convert image to Base64 for saving in JSON
+    /**
+     * Convert an image file to Base64 format.
+     * @param {File} file - The image file
+     * @returns {Promise} - The Base64 string
+     */
     const convertImageToBase64 = (file) => {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -105,7 +126,10 @@ function LocationForm({ isNewLocation }) {
         });
     };
 
-    // Handle images in Quill editor by converting them to Base64
+    /**
+     * Handle the image insertion event in the Quill editor.
+     * @returns {void}
+     */
     const handleImageInsertion = () => {
         const input = document.createElement('input');
         input.setAttribute('type', 'file');
@@ -120,7 +144,12 @@ function LocationForm({ isNewLocation }) {
         };
     };
 
-    // Validate the location position format (latitude, longitude)
+    /**
+     * Check if the location position is in the correct format.
+     * Format: (latitude, longitude) where latitude and longitude are real numbers.
+     * @param {string} locationPosition - The location position string
+     * @returns {boolean} - True if the format is correct, false otherwise
+     * */
     function isValidLocationPosition(locationPosition) {
         // Regular expression for validating latitude and longitude in the format (lat, long)
         const regex = /^\s*\(\s*[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)\s*\)\s*$/;
@@ -129,7 +158,9 @@ function LocationForm({ isNewLocation }) {
         return regex.test(locationPosition);
     }
     
-
+    /**
+     * Handle form submission for adding or updating location.
+     */
     useEffect(() => {
         if (quill) {
             // Add the image handler to Quill
@@ -137,7 +168,11 @@ function LocationForm({ isNewLocation }) {
         }
     }, [quill]);
 
-    // Handle form submission for adding or updating location
+    /**
+     * Handle form submission for adding or updating location.
+     * @param {Object} event - The event object
+     * @returns {void}
+     */
     const handleFormSubmit = async (event) => {
         event.preventDefault(); // Prevent the default form submission behavior
 
@@ -170,7 +205,11 @@ function LocationForm({ isNewLocation }) {
     return (
         <div className="container">
             <h2>{currentLocation.id ? 'Edit Location for Project ID: ' + currentLocation.project_id : 'Add Location for Project ID: ' + id}</h2>
+
+            {/* Form to add or edit a location */}
             <form onSubmit={handleFormSubmit}>
+
+                {/* Location Name */}
                 <div className="mb-3">
                     <label>Location Name</label>
                     <input
@@ -183,6 +222,7 @@ function LocationForm({ isNewLocation }) {
                     />
                 </div>
 
+                {/* Location Trigger */}
                 <div className="mb-3">
                     <label>Location Trigger</label>
                     <select
@@ -198,6 +238,7 @@ function LocationForm({ isNewLocation }) {
                     </select>
                 </div>
 
+                {/* Location Position */}
                 <div className="mb-3">
                     <label>Location Position</label>
                     <input
@@ -209,6 +250,7 @@ function LocationForm({ isNewLocation }) {
                     />
                 </div>
 
+                {/* Location Order */}
                 <div className="mb-3">
                     <label>Location Order</label>
                     <input
@@ -220,11 +262,13 @@ function LocationForm({ isNewLocation }) {
                     />
                 </div>
 
+                {/* Location Content */}
                 <div className="mb-3">
                     <label>Location Content</label>
                     <div ref={quillRef} style={{ minHeight: '200px', border: '1px solid #ccc' }} />
                 </div>
 
+                {/* Extra */}
                 <div className="mb-3">
                     <label>Extra</label>
                     <textarea
@@ -235,6 +279,7 @@ function LocationForm({ isNewLocation }) {
                     />
                 </div>
 
+                {/* Clue */}
                 <div className="mb-3">
                     <label>Clue</label>
                     <textarea
@@ -245,6 +290,7 @@ function LocationForm({ isNewLocation }) {
                     />
                 </div>
 
+                {/* Score Points */}
                 <div className="mb-3">
                     <label>Score Points</label>
                     <input
@@ -256,6 +302,7 @@ function LocationForm({ isNewLocation }) {
                     />
                 </div>
 
+                {/* Submit and Cancel buttons */}
                 <button type="submit" className="btn btn-primary">
                     {currentLocation.id ? 'Save Changes' : 'Add Location'}
                 </button>

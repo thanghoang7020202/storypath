@@ -7,8 +7,7 @@ import { deleteProject, getProjects} from '../api';
  * @returns JSX element
  */
 function ProjectList() {
-    // Fetch projects from context
-    const [projectList, setProjectList] = useState([]);
+    const [projectList, setProjectList] = useState([]);                                 // State to manage projects
 
     // Fetch projects from the API when the component mounts
     useEffect(() => {
@@ -44,6 +43,7 @@ function ProjectList() {
                 <Link to="/project/add" className="btn btn-primary btn-lg">Add Project</Link>
             </div>
 
+            {/* Display the list of projects */}
             <div className="list-group">
                 {projectList.length > 0 ? (
                     projectList.map((project) => (
@@ -86,7 +86,8 @@ function ProjectList() {
                                     className="btn btn-light mx-1 text-decoration-none">
                                     View Locations
                                 </Link>
-
+                                
+                                {/* Delete button */}
                                 <button
                                     className="btn btn-danger mx-1"
                                     onClick={() => handleDelete(project.id)}

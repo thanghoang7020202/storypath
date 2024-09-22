@@ -7,11 +7,13 @@ import { getLocations, deleteLocation, updateLocation, getProject } from '../api
  * @returns JSX element
  */
 function LocationsList() {
-    const [locations, setLocations] = useState([]);
-    const { id } = useParams();
-    const [project_title, setProjectTitle] = useState('');
+    const [locations, setLocations] = useState([]);                                 // State to manage locations
+    const { id } = useParams();                                                     // Get the project ID from the URL
+    const [project_title, setProjectTitle] = useState('');                          // State to store the project title
 
-    // Fetch locations from the API when the component mounts
+    /**
+     * Fetch locations from the API when the component mounts.
+     */
     useEffect(() => {
         const fetchLocationsAndProject = async () => {
             try {
@@ -34,7 +36,10 @@ function LocationsList() {
         fetchLocationsAndProject(); // Call the async function
     }, [id]); // Call the async function when the project ID changes
     
-    // Handle deleting a location
+    /**
+     * Function to delete a location.
+     * @param {number} locationId - The ID of the location to delete
+     */
     const handleDelete = async (locationId) => {
         try {
             await deleteLocation(locationId); // Delete location via API
@@ -46,10 +51,15 @@ function LocationsList() {
         }
     };
 
-    // Function to move a location up by decreasing its location_order
+    /**
+     * Function to move a location up by decreasing its location_order.
+     * @param {number} index - The index of the location to move up
+     * @returns {void}
+     */
     const handleMoveUp = async (index) => {
         if (index === 0) return; // Can't move the first item up
 
+        // Create a copy of the locations array
         const updatedLocations = [...locations];
         const currentLocation = updatedLocations[index];
         const previousLocation = updatedLocations[index - 1];
@@ -67,7 +77,11 @@ function LocationsList() {
         await updateLocation(previousLocation.id, previousLocation);
     };
 
-    // Function to move a location down by increasing its location_order
+    /**
+     * Function to move a location down by increasing its location_order.
+     * @param {number} index - The index of the location to move down
+     * @returns {void}
+     */
     const handleMoveDown = async (index) => {
         if (index === locations.length - 1) return; // Can't move the last item down
 
@@ -103,6 +117,7 @@ function LocationsList() {
                 </Link>
             </div>
 
+            {/* Display the list of locations */}
             <div className="list-group">
                 {locations.length > 0 ? (
                     locations.map((location, index) => (

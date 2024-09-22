@@ -2,11 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { addProject, updateProject, getProject } from '../api';
 
+/**
+ * ProjectForm component to add or edit a project.
+ * @param {Object} props - The props object (contains isNewProject flag)
+ * @returns JSX element
+ */
 function ProjectForm({ isNewProject }) {
-    const navigate = useNavigate();
-    const { id } = useParams();
-    let existingProject = null;
-    let firstRender = true;
+    const navigate = useNavigate();                                             // Hook to navigate to a different URL
+    const { id } = useParams();                                                 // Get the project ID from the URL
+    let existingProject = null;                                                 // Variable to store the existing project
+    let firstRender = true;                                                     // Variable to track the first render
 
     // State to manage the current project being added or edited
     const [currentProject, setCurrentProject] = useState({
@@ -24,6 +29,9 @@ function ProjectForm({ isNewProject }) {
     // if isNewProject is false, call GET /projects/:id to get the project details
     const [initialProject, setInitialProject] = useState(currentProject);
 
+    /**
+     * Fetch the project details when the component mounts.
+     */
     const fetchProject = async () => {
         try {
             const data = await getProject(id);
@@ -95,7 +103,11 @@ function ProjectForm({ isNewProject }) {
     return (
         <div className="container">
             <h2>{currentProject.id ? 'Edit Project of id: ' + currentProject.id : 'Add Project'}</h2>
+            
+            {/* Form to add or edit a project */}
             <form onSubmit={handleFormSubmit}>
+
+                {/* Input fields for project title */}
                 <div className="mb-3">
                     <label>Title</label>
                     <input
@@ -108,6 +120,7 @@ function ProjectForm({ isNewProject }) {
                     />
                 </div>
 
+                {/* Input fields for project description */}
                 <div className="mb-3">
                     <label>Description</label>
                     <textarea
@@ -118,6 +131,7 @@ function ProjectForm({ isNewProject }) {
                     />
                 </div>
 
+                {/* Input fields for project instructions */}
                 <div className="mb-3">
                     <label>Instructions</label>
                     <textarea
@@ -128,6 +142,7 @@ function ProjectForm({ isNewProject }) {
                     />
                 </div>
 
+                {/* Input fields for project initial clue */}
                 <div className="mb-3">
                     <label>Initial Clue</label>
                     <textarea
@@ -138,6 +153,7 @@ function ProjectForm({ isNewProject }) {
                     />
                 </div>
 
+                {/* Dropdown for homescreen display */}
                 <div className="mb-3">
                     <label>Homescreen Display</label>
                     <select
@@ -152,6 +168,7 @@ function ProjectForm({ isNewProject }) {
                     </select>
                 </div>
 
+                {/* Dropdown for participant scoring */}
                 <div className="mb-3">
                     <label>Participant Scoring</label>
                     <select
@@ -165,6 +182,7 @@ function ProjectForm({ isNewProject }) {
                     </select>
                 </div>
 
+                {/* Checkbox for project published status */}
                 <div className="mb-3">
                     <label>Published</label>
                     <input
@@ -176,6 +194,7 @@ function ProjectForm({ isNewProject }) {
                         />
                 </div>
 
+                {/* Submit and Cancel buttons */}
                 <button type="submit" className="btn btn-primary">
                     {currentProject.id ? 'Save Changes' : 'Add Project'}
                 </button>
