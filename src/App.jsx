@@ -1,23 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
+// Importing the Header and Footer components
 import Header from './headerAndFooter/Header';
 import Footer from './headerAndFooter/Footer';
 
+// Importing the Home, ProjectList, ProjectForm, LocationsList, LocationForm, and Preview components
 import Home from './components/Home';
 import ProjectList from './components/ProjectsList';
 import ProjectForm from './components/ProjectForm';
 import LocationsList from './components/LocationsList';
 import LocationForm from './components/LocationForm';
 import Preview from './components/Preview';
+
+// Importing the ProjectsContext to manage projects
 import { ProjectsContext } from './data/ProjectsContext';
 
-// Example Recipe imports
-import RecipeList from './components/RecipeList';
-import Recipe from './components/Recipe';
-import { recipes } from './data/recipes';
-
-// footer links
+// Importing the About, Contact, and PrivacyPolicy for the footer
 import About from './components/About';
 import Contact from './components/Contact';
 import PrivacyPolicy from './components/PrivacyPolicy';
@@ -84,7 +83,7 @@ function App() {
           <ProjectsContext.Provider value={projects}>
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/projects" element={<ProjectList projects={projects} />} />
+              <Route path="/projects" element={<ProjectList />} />
               <Route path="/project/add" element={<ProjectForm isNewProject={true}/>} />
               <Route path="/project/edit/:id" element={<ProjectForm isNewProject={false} />} />
               <Route path="/location/:id" element={<LocationsList />} />

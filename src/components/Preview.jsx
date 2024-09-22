@@ -19,8 +19,11 @@ const Preview = () => {
     const [totalPoints, setTotalPoints] = useState(0);                      // State to store the total points    
     const [locationsVisited, setLocationsVisited] = useState([]);           // State to store the locations visited
 
-    const mapRef = useRef(); // Ref for the map instance
+    const mapRef = useRef();                                                // Ref for the map instance
 
+    /**
+     * Fetch the project and locations when the component mounts.
+     */
     useEffect(() => {
         const fetchProjectAndLocations = async () => {
             const projectData = await getProject(id);
@@ -39,7 +42,11 @@ const Preview = () => {
         fetchProjectAndLocations();
     }, [id]);
 
-    // Handle location change from dropdown
+    /**
+     * Handle the location change event.
+     * @param {Object} event - The event object
+     * @returns {void}
+     * */
     const handleLocationChange = (event) => {
         const newLocation = event.target.value;
         setSelectedLocation(newLocation);
@@ -63,7 +70,11 @@ const Preview = () => {
         }
     };
 
-    // Component to fit bounds based on markers
+    /**
+     * Fit the map bounds to the markers.
+     * @param {Object} locations - The locations array
+     * @returns {null} - Returns null
+     */
     const FitMapBounds = ({ locations }) => {
         const map = useMap(); // Get the map instance
 
