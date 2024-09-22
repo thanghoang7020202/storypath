@@ -117,7 +117,7 @@ function LocationsList() {
                                 </div>
                                 <p className="text-muted">Trigger: {location.location_trigger}</p>
                                 <p className="text-muted">
-                                    Position: ({location.location_position})
+                                    Position: {location.location_position}
                                 </p>
                                 <p className="text-muted">Points: {location.score_points}</p>
                             </div>

@@ -148,6 +148,7 @@ function ProjectForm({ isNewProject }) {
                     >
                         <option value="Display initial clue">Display initial clue</option>
                         <option value="Display all locations">Display all locations</option>
+                        <option value="Show map">Show map</option>
                     </select>
                 </div>
 

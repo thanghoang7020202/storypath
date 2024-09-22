@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-import Header from './components/Header';
-import Footer from './components/Footer';
+import Header from './headerAndFooter/Header';
+import Footer from './headerAndFooter/Footer';
 
 import Home from './components/Home';
 import ProjectList from './components/ProjectsList';
