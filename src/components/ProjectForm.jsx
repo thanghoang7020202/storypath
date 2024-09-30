@@ -36,7 +36,9 @@ function ProjectForm({ isNewProject }) {
         try {
             const data = await getProject(id);
             existingProject = data[0];
-            setCurrentProject({
+
+            // used temp to avoid async issues
+            let temp = {
                 id: existingProject.id,
                 title: existingProject.title,
                 description: existingProject.description,
@@ -45,8 +47,9 @@ function ProjectForm({ isNewProject }) {
                 instructions: existingProject.instructions,
                 initial_clue: existingProject.initial_clue,
                 homescreen_display: existingProject.homescreen_display
-            });
-            setInitialProject({currentProject});
+            }
+            setCurrentProject(temp);
+            setInitialProject(temp);
         } catch (error) {
             console.error('Error fetching project:', error);
         }
@@ -70,14 +73,17 @@ function ProjectForm({ isNewProject }) {
     const handleFormSubmit = async (event) => {
         event.preventDefault(); 
         if (isNewProject) {
-            // remove id from currentProject
-            delete currentProject.id; // Remove the ID before adding a new project
+            // create a copy of currentProject and remove id
+            let newProject = { ...currentProject };
+
+            // remove id from newProject
+            delete newProject.id;
             // add project and get the response
-            await addProject(currentProject);
+            await addProject(newProject);
             alert('Project added successfully!');
         } else {
-            delete currentProject.id; // Prevent updating the primary key
-            await updateProject(id, currentProject);
+            delete newProject.id;
+            await updateProject(id, newProject);
             alert('Project updated successfully!');
         }
         setInitialProject(currentProject);

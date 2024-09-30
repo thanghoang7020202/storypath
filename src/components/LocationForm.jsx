@@ -40,7 +40,7 @@ function LocationForm({ isNewLocation }) {
         location_order: existingLocation ? existingLocation.location_order : 0,
         username: 's4759487',
         location_content: existingLocation ? existingLocation.location_content : '',
-        extra: existingLocation ? existingLocation.extra : '',
+        // extra: existingLocation ? existingLocation.extra : '',
         clue: existingLocation ? existingLocation.clue : '',
         score_points: existingLocation ? existingLocation.score_points : 0,
     });
@@ -53,7 +53,7 @@ function LocationForm({ isNewLocation }) {
                 try {
                     const data = await getLocation(id);
                     existingLocation = data[0];
-                    setCurrentLocation({
+                    const temp = {
                         id: existingLocation.id,
                         project_id: existingLocation.project_id,
                         location_name: existingLocation.location_name,
@@ -62,14 +62,14 @@ function LocationForm({ isNewLocation }) {
                         location_order: existingLocation.location_order,
                         username: existingLocation.username,
                         location_content: existingLocation.location_content,
-                        extra: existingLocation.extra,
                         clue: existingLocation.clue,
                         score_points: existingLocation.score_points,
-                    });
+                    };
                     if (quill) {
                         quill.clipboard.dangerouslyPasteHTML(existingLocation.location_content); // Load the existing content into the editor
                     }
-                    setInitialLocation(existingLocation);
+                    setCurrentLocation(temp);
+                    setInitialLocation(temp);
                 } catch (error) {
                     console.error('Error fetching location:', error);
                 }
@@ -103,8 +103,12 @@ function LocationForm({ isNewLocation }) {
      */
     const handleCancelClick = (event) => {
         if (hasUnsavedChanges()) {
+            // send a confirmation dialog if there are unsaved changes and showing what fields have changed
             const confirmLeave = window.confirm(
-                'You have unsaved changes. Are you sure you want to leave without saving?'
+                'You have unsaved changes. Are you sure you want to leave without saving?\nChanges:\n' +
+                    JSON.stringify(currentLocation) +
+                    '\nInitial:\n' +
+                    JSON.stringify(initialLocation)
             );
             if (!confirmLeave) {
                 event.preventDefault();
@@ -184,20 +188,22 @@ function LocationForm({ isNewLocation }) {
         // Get the content from Quill editor, which includes images in Base64
         const locationContent = quill.root.innerHTML;
 
-        const updatedLocation = {
+        let temp = {
             ...currentLocation,
-            location_content: locationContent, // Save the editor content
+            location_content: locationContent,
         };
-
-        if (isNewLocation) {
-            delete updatedLocation.id; // Remove the ID for new locations
-            await addLocation(updatedLocation); // Add a new location via API
+        setCurrentLocation(temp); // Update the current location state
+        setInitialLocation(temp); // Set the initial location to the current location
+        
+        // Remove the ID before adding/updating the location
+        delete temp.id;
+        if (isNewLocation) {    
+            await addLocation(temp); // Add new location
             alert('Location added successfully!');
         } else {
-            await updateLocation(id, updatedLocation); // Update existing location
+            await updateLocation(id, temp); // Update the existing location
             alert('Location updated successfully!');
         }
-        setInitialLocation(updatedLocation);
         
         //navigate(`/locations/${currentLocation.project_id}`); // Redirect after submission
     };
@@ -268,7 +274,7 @@ function LocationForm({ isNewLocation }) {
                     <div ref={quillRef} style={{ minHeight: '200px', border: '1px solid #ccc' }} />
                 </div>
 
-                {/* Extra */}
+                {/* Extra
                 <div className="mb-3">
                     <label>Extra</label>
                     <textarea
@@ -277,7 +283,7 @@ function LocationForm({ isNewLocation }) {
                         value={currentLocation.extra}
                         onChange={handleInputChange}
                     />
-                </div>
+                </div> */}
 
                 {/* Clue */}
                 <div className="mb-3">
