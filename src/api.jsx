@@ -92,6 +92,7 @@ export const getLocations = async () => {
     }
 };
 
+// 6. GET Request - Fetch a single location
 export const getLocation = async (locationId) => {
     try {
         const data = await apiRequest(`/location?id=eq.${locationId}`);
@@ -102,7 +103,7 @@ export const getLocation = async (locationId) => {
     }
 }
 
-// 6. POST Request - Add a new location
+// 7. POST Request - Add a new location
 export const addLocation = async (newLocation) => {
     try {
         await apiRequest('/location', 'POST', newLocation);
@@ -111,6 +112,7 @@ export const addLocation = async (newLocation) => {
     }
 };
 
+// 8. PATCH Request - Update a location
 export const updateLocation = async (locationId, updatedData) => {
     try {
         await apiRequest(`/location?id=eq.${locationId}`, 'PATCH', updatedData);
@@ -119,6 +121,7 @@ export const updateLocation = async (locationId, updatedData) => {
     }
 };
 
+// 9. DELETE Request - Delete a location
 export const deleteLocation = async (locationId) => {
     try {
         await apiRequest(`/location?id=eq.${locationId}`, 'DELETE');

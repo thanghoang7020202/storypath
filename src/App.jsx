@@ -32,7 +32,6 @@ function App() {
   const headerLinks = [
     { path: '/', text: 'Home' },
     { path: '/projects', text: 'Projects' }
-    // { path: '/recipes', text: 'Recipes' }
   ];
 
   const footerLinks = [
