@@ -204,8 +204,6 @@ function LocationForm({ isNewLocation }) {
             await updateLocation(id, temp); // Update the existing location
             alert('Location updated successfully!');
         }
-        
-        //navigate(`/locations/${currentLocation.project_id}`); // Redirect after submission
     };
 
     return (

@@ -24,7 +24,10 @@ const apiRequest = async (endpoint, method = 'GET', body = null) => {
         if (!response.ok) {
             throw new Error(`Error: ${response.statusText}`);
         }
-        return response.json(); // Parse the JSON response
+        if (method === 'GET') {
+            return response.json(); // Parse the JSON response
+        }
+        return response; // Return the response (for POST, PATCH, DELETE)
     } catch (error) {
         console.error(`Error in API request: ${error}`);
         throw error; // Rethrow to handle it in the calling function

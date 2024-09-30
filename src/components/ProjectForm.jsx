@@ -87,7 +87,6 @@ function ProjectForm({ isNewProject }) {
             alert('Project updated successfully!');
         }
         setInitialProject(currentProject);
-        //navigate('/projects'); // Redirect to the projects list after submission
     };
 
     // Compare currentProject with initialProject to check if the form has unsaved changes
