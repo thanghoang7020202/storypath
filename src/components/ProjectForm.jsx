@@ -12,6 +12,7 @@ function ProjectForm({ isNewProject }) {
     const { id } = useParams();                                                 // Get the project ID from the URL
     let existingProject = null;                                                 // Variable to store the existing project
     let firstRender = true;                                                     // Variable to track the first render
+    const [isSubmitting, setIsSubmitting] = useState(false);                    // State to manage form submission
 
     // State to manage the current project being added or edited
     const [currentProject, setCurrentProject] = useState({
@@ -72,21 +73,21 @@ function ProjectForm({ isNewProject }) {
     // Handle form submission to add or update project
     const handleFormSubmit = async (event) => {
         event.preventDefault(); 
-        if (isNewProject) {
-            // create a copy of currentProject and remove id
-            let newProject = { ...currentProject };
 
-            // remove id from newProject
-            delete newProject.id;
+        // create a copy of currentProject and remove id
+        let newProject = { ...currentProject };
+        // remove id from newProject
+        delete newProject.id;
+        if (isNewProject) {
             // add project and get the response
             await addProject(newProject);
             alert('Project added successfully!');
         } else {
-            delete newProject.id;
             await updateProject(id, newProject);
             alert('Project updated successfully!');
         }
         setInitialProject(currentProject);
+        setIsSubmitting(true); // Set isSubmitting to true after form submission
     };
 
     // Compare currentProject with initialProject to check if the form has unsaved changes
@@ -203,7 +204,9 @@ function ProjectForm({ isNewProject }) {
                 <button type="submit" className="btn btn-primary">
                     {currentProject.id ? 'Save Changes' : 'Add Project'}
                 </button>
-                <Link to="/projects" className="btn btn-secondary ms-2"  onClick={handleCancelClick} >Cancel</Link>
+                {/* if issubmitting is true, 'return' button, else 'cancel' button */}
+                <Link to="/projects" className="btn btn-secondary ms-2"  onClick={handleCancelClick} > {isSubmitting ? 'Return' : 'Cancel'}
+                </Link>
             </form>
         </div>
     );
