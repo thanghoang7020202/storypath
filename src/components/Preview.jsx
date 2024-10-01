@@ -5,6 +5,8 @@ import { getProject, getLocations } from '../api'; // API calls as you import
 // Import React Leaflet for map
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+// import Preview styles
+import './Preview.css';
 
 /**
  * Preview component to display the project preview.
@@ -182,8 +184,18 @@ const Preview = () => {
                     ) : (
                         <div>
                             <h5>Location Clue</h5>
+                            {/* Location Clue */}
                             <p>{locations.find((loc) => loc.location_name === selectedLocation)?.clue}</p>
+                            {/* location_content */}
+                            <h5>Location Content</h5>
+                                <div style={{ overflow: 'hidden' }}
+                                    dangerouslySetInnerHTML={{
+                                        __html: locations.find((loc) => loc.location_name === selectedLocation)?.location_content
+                                    }}
+                                />
                         </div>
+                        
+
                     )}
                 </div>
 

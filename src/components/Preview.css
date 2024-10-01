@@ -1,0 +1,4 @@
+.mobile-preview-container img {
+    max-width: 100%;   /* Allow image to scale down to fit the container */
+    height: auto;      /* Maintain the aspect ratio */
+}
