@@ -249,7 +249,7 @@ function LocationForm({ isNewLocation }) {
                         required
                     />
                     {hoveredField === 'location_name' && (
-                        <small className="form-text text-muted">Please enter the name of the location.</small>
+                        <small className="form-text text-muted">The name of the location, required for submission.</small>
                     )}
                 </div>
 
@@ -265,7 +265,6 @@ function LocationForm({ isNewLocation }) {
                         onMouseLeave={() => setHoveredField('')}
                         required
                     >
-                        <option value="">Select a trigger...</option>
                         <option value="Location Entry">Location Entry</option>
                         <option value="QR Code Scan">QR Code Scan</option>
                         <option value="Both Location Entry and QR Code Scan">Both Location Entry and QR Code Scan</option>
@@ -302,7 +301,12 @@ function LocationForm({ isNewLocation }) {
                         className="form-control"
                         value={currentLocation.location_order}
                         onChange={handleInputChange}
+                        onMouseEnter={() => setHoveredField('location_order')}
+                        onMouseLeave={() => setHoveredField('')}
                     />
+                    {hoveredField === 'location_order' && (
+                        <small className="form-text text-muted">The order in which the location appears in the project.</small>
+                    )}
                 </div>
 
                 {/* Clue */}
@@ -314,7 +318,12 @@ function LocationForm({ isNewLocation }) {
                         className="form-control"
                         value={currentLocation.clue}
                         onChange={handleInputChange}
+                        onMouseEnter={() => setHoveredField('clue')}
+                        onMouseLeave={() => setHoveredField('')}
                     />
+                    {hoveredField === 'clue' && (
+                        <small className="form-text text-muted">A clue to help users find the location. Optional.</small>
+                    )}
                 </div>
 
                 {/* Score Points */}
@@ -326,14 +335,28 @@ function LocationForm({ isNewLocation }) {
                         className="form-control"
                         value={currentLocation.score_points}
                         onChange={handleInputChange}
+                        onMouseEnter={() => setHoveredField('score_points')}
+                        onMouseLeave={() => setHoveredField('')}
                         required
                     />
+                    {hoveredField === 'score_points' && (
+                        <small className="form-text text-muted">Specify the number of points participants earn by reaching this location, required
+for submission.</small>
+                    )}
                 </div>
 
                 {/* Content */}
                 <div className="mb-3">
                     <label>Content</label>
-                    <div ref={quillRef} />
+                    <div ref={quillRef} 
+                        className={`form-control ${errorFields.location_content ? 'is-invalid' : ''}`} // Add red border for errors
+                        style={{ height: '200px' }}
+                        onMouseEnter={() => setHoveredField('location_content')}
+                        onMouseLeave={() => setHoveredField('')}
+                    />
+                    {hoveredField === 'location_content' && (
+                        <small className="form-text text-muted">Add content for the location.</small>
+                    )}
                 </div>
 
                 {/* Buttons */}
