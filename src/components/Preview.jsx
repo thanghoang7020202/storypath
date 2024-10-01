@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { getProject, getLocations } from '../api'; // API calls as you import
 
 // Import React Leaflet for map
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap, Circle } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 // import Preview styles
 import './Preview.css';
@@ -176,11 +176,16 @@ const Preview = () => {
                                         // Extract latitude and longitude from loc.location_position
                                         const [latitude, longitude] = location.location_position.slice(1, -1).split(',').map(coord => parseFloat(coord.trim()));
                                         return (
-                                            <Marker key={location.id} position={[latitude, longitude]}>
+                                            // <Marker key={location.id} position={[latitude, longitude]}>
+                                            //     <Popup>
+                                            //         {location.location_name}: {location.clue}
+                                            //     </Popup>
+                                            // </Marker>
+                                            <Circle key={location.id} center={[latitude, longitude]} pathOptions={{ color: 'purple' }} radius={50} >
                                                 <Popup>
                                                     {location.location_name}: {location.clue}
                                                 </Popup>
-                                            </Marker>
+                                            </Circle>
                                         );
                                     })}
                                     <FitMapBounds locations={locations} />
@@ -193,6 +198,7 @@ const Preview = () => {
                             {/* Location Clue */}
                             <p>{locations.find((loc) => loc.location_name === selectedLocation)?.clue}</p>
                             {/* location_content */}
+
                             <h5>Location Content</h5>
                                 <div style={{ overflow: 'hidden' }}
                                     dangerouslySetInnerHTML={{
