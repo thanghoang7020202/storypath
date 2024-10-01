@@ -136,7 +136,7 @@ function ProjectForm({ isNewProject }) {
                         required
                     />
                     {hoveredField === 'title' && (
-                        <small className="form-text text-muted">Please enter the project title.</small>
+                        <small className="form-text text-muted">The name of the project, required for submission.</small>
                     )}
                 </div>
 
@@ -152,7 +152,7 @@ function ProjectForm({ isNewProject }) {
                         onMouseLeave={() => setHoveredField('')}
                     />
                     {hoveredField === 'description' && (
-                        <small className="form-text text-muted">Provide a brief description of the project.</small>
+                        <small className="form-text text-muted">A brief description of the project, not displayed to participants.</small>
                     )}
                 </div>
 
@@ -168,7 +168,8 @@ function ProjectForm({ isNewProject }) {
                         onMouseLeave={() => setHoveredField('')}
                     />
                     {hoveredField === 'instructions' && (
-                        <small className="form-text text-muted">Instructions for the participants.</small>
+                        <small className="form-text text-muted">Instructions for participants, explaining how to engage with the
+project.</small>
                     )}
                 </div>
 
@@ -184,7 +185,7 @@ function ProjectForm({ isNewProject }) {
                         onMouseLeave={() => setHoveredField('')}
                     />
                     {hoveredField === 'initial_clue' && (
-                        <small className="form-text text-muted">The initial clue for the project.</small>
+                        <small className="form-text text-muted">The first clue to start the project. This field is optional.</small>
                     )}
                 </div>
 
@@ -204,7 +205,7 @@ function ProjectForm({ isNewProject }) {
                         <option value="Show map">Show map</option>
                     </select>
                     {hoveredField === 'homescreen_display' && (
-                        <small className="form-text text-muted">Choose the homescreen display option.</small>
+                        <small className="form-text text-muted">Choose what to display on the homescreen of the project.</small>
                     )}
                 </div>
 
@@ -223,7 +224,7 @@ function ProjectForm({ isNewProject }) {
                         <option value="Number of Locations Entered">Number of Locations Entered</option>
                     </select>
                     {hoveredField === 'participant_scoring' && (
-                        <small className="form-text text-muted">Choose the participant scoring method.</small>
+                        <small className="form-text text-muted">Select how participants will be scored.</small>
                     )}
                 </div>
 
