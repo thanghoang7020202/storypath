@@ -176,11 +176,6 @@ const Preview = () => {
                                         // Extract latitude and longitude from loc.location_position
                                         const [latitude, longitude] = location.location_position.slice(1, -1).split(',').map(coord => parseFloat(coord.trim()));
                                         return (
-                                            // <Marker key={location.id} position={[latitude, longitude]}>
-                                            //     <Popup>
-                                            //         {location.location_name}: {location.clue}
-                                            //     </Popup>
-                                            // </Marker>
                                             <Circle key={location.id} center={[latitude, longitude]} pathOptions={{ color: 'purple' }} radius={50} >
                                                 <Popup>
                                                     {location.location_name}: {location.clue}
