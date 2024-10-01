@@ -125,9 +125,15 @@ const Preview = () => {
                 style={{ width: '350px', backgroundColor: '#fff', border: '1px solid #ddd' }}
             >
                 {/* Title with purple background */}
-                <div className="p-3 mb-4" style={{ backgroundColor: '#8A2BE2', color: '#fff', borderRadius: '8px' }}>
+                {selectedLocation === 'Homescreen' ? (
+                    <div className="p-3 mb-4" style={{ backgroundColor: '#8A2BE2', color: '#fff', borderRadius: '8px' }}>
                     <h3 className="m-0">{project.title}</h3>
                 </div>
+                ) : (
+                    <div className="p-3 mb-4" style={{ backgroundColor: '#8A2BE2', color: '#fff', borderRadius: '8px' }}>
+                        <h3 className="m-0">{selectedLocation}</h3>
+                    </div>
+                )}
 
                 {/* Instructions */}
                 <div>

@@ -48,6 +48,7 @@ function LocationForm({ isNewLocation }) {
 
     const [hoveredField, setHoveredField] = useState('');                       // State to track hovered field
     const [errorFields, setErrorFields] = useState({});                         // Track error fields
+    const [isSubmitting, setIsSubmitting] = useState(false);                    // State to manage form submission
 
     // If this is not a new location, fetch the location details -> id is location_id
     if (!isNewLocation) {
@@ -213,8 +214,9 @@ function LocationForm({ isNewLocation }) {
             ...currentLocation,
             location_content: locationContent,
         };
-        setCurrentLocation(temp); // Update the current location state
-        setInitialLocation(temp); // Set the initial location to the current location
+        setCurrentLocation(temp);   // Update the current location state
+        setInitialLocation(temp);   // Set the initial location to the current location
+        setIsSubmitting(true);      // Set isSubmitting to true after form submission
         
         // Remove the ID before adding/updating the location
         delete temp.id;
@@ -324,6 +326,7 @@ function LocationForm({ isNewLocation }) {
                         className="form-control"
                         value={currentLocation.score_points}
                         onChange={handleInputChange}
+                        required
                     />
                 </div>
 
@@ -337,7 +340,9 @@ function LocationForm({ isNewLocation }) {
                 <button type="submit" className="btn btn-primary">
                     {isNewLocation ? 'Add Location' : 'Update Location'}
                 </button>
-                <Link to={`/location/${currentLocation.project_id}`} className="btn btn-secondary ms-2" onClick={handleCancelClick}> Cancel </Link>
+                {/* if issubmitting is true, 'return' button, else 'cancel' button */}
+                <Link to={`/location/${currentLocation.project_id}`} className="btn btn-secondary ms-2"  onClick={handleCancelClick} > {isSubmitting ? 'Return' : 'Cancel'}
+                </Link>
             </form>
         </div>
     );
