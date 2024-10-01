@@ -46,6 +46,9 @@ function LocationForm({ isNewLocation }) {
     });
     const [initialLocation, setInitialLocation] = useState(currentLocation);    // State to store the initial form data for comparison
 
+    const [hoveredField, setHoveredField] = useState('');                       // State to track hovered field
+    const [errorFields, setErrorFields] = useState({});                         // Track error fields
+
     // If this is not a new location, fetch the location details -> id is location_id
     if (!isNewLocation) {
         useEffect(() => {
@@ -180,11 +183,29 @@ function LocationForm({ isNewLocation }) {
     const handleFormSubmit = async (event) => {
         event.preventDefault(); // Prevent the default form submission behavior
 
+        // Reset error fields
+        // check if the location_position is in the correct format (latitude, longitude) where latitude and longitude are numbers
+        setErrorFields({});
+        // Validate required fields
+        const requiredFields = ['location_name', 'location_trigger', 'location_position'];
+        let newErrorFields = {};
+        requiredFields.forEach(field => {
+            if (!currentLocation[field]) {
+                newErrorFields[field] = true;
+            }
+        });
+        setErrorFields(newErrorFields);
+
         // check if the location_position is in the correct format (latitude, longitude) where latitude and longitude are numbers
         if (!isValidLocationPosition(currentLocation.location_position)) {
             alert("Invalid format for Location Position. Use (number,number) format.");
             return;
         }
+
+        if (Object.keys(newErrorFields).length > 0) {
+            return; // Stop submission if there are errors
+        }
+
         // Get the content from Quill editor, which includes images in Base64
         const locationContent = quill.root.innerHTML;
 
@@ -210,7 +231,6 @@ function LocationForm({ isNewLocation }) {
         <div className="container">
             <h2>{currentLocation.id ? 'Edit Location for Project ID: ' + currentLocation.project_id : 'Add Location for Project ID: ' + id}</h2>
 
-            {/* Form to add or edit a location */}
             <form onSubmit={handleFormSubmit}>
 
                 {/* Location Name */}
@@ -219,11 +239,16 @@ function LocationForm({ isNewLocation }) {
                     <input
                         type="text"
                         name="location_name"
-                        className="form-control"
+                        className={`form-control ${errorFields.location_name ? 'is-invalid' : ''}`} // Add red border for errors
                         value={currentLocation.location_name}
                         onChange={handleInputChange}
+                        onMouseEnter={() => setHoveredField('location_name')}
+                        onMouseLeave={() => setHoveredField('')}
                         required
                     />
+                    {hoveredField === 'location_name' && (
+                        <small className="form-text text-muted">Please enter the name of the location.</small>
+                    )}
                 </div>
 
                 {/* Location Trigger */}
@@ -231,15 +256,21 @@ function LocationForm({ isNewLocation }) {
                     <label>Location Trigger</label>
                     <select
                         name="location_trigger"
-                        className="form-control"
+                        className={`form-control ${errorFields.location_trigger ? 'is-invalid' : ''}`} // Add red border for errors
                         value={currentLocation.location_trigger}
                         onChange={handleInputChange}
+                        onMouseEnter={() => setHoveredField('location_trigger')}
+                        onMouseLeave={() => setHoveredField('')}
                         required
                     >
+                        <option value="">Select a trigger...</option>
                         <option value="Location Entry">Location Entry</option>
                         <option value="QR Code Scan">QR Code Scan</option>
                         <option value="Both Location Entry and QR Code Scan">Both Location Entry and QR Code Scan</option>
                     </select>
+                    {hoveredField === 'location_trigger' && (
+                        <small className="form-text text-muted">Select how the location can be triggered.</small>
+                    )}
                 </div>
 
                 {/* Location Position */}
@@ -248,10 +279,16 @@ function LocationForm({ isNewLocation }) {
                     <input
                         type="text"
                         name="location_position"
-                        className="form-control"
+                        className={`form-control ${errorFields.location_position ? 'is-invalid' : ''}`} // Add red border for errors
                         value={currentLocation.location_position}
                         onChange={handleInputChange}
+                        onMouseEnter={() => setHoveredField('location_position')}
+                        onMouseLeave={() => setHoveredField('')}
+                        required
                     />
+                    {hoveredField === 'location_position' && (
+                        <small className="form-text text-muted">Format: (latitude,longitude), e.g., (40.7128,-74.0060)</small>
+                    )}
                 </div>
 
                 {/* Location Order */}
@@ -266,27 +303,11 @@ function LocationForm({ isNewLocation }) {
                     />
                 </div>
 
-                {/* Location Content */}
-                <div className="mb-3">
-                    <label>Location Content</label>
-                    <div ref={quillRef} style={{ minHeight: '200px', border: '1px solid #ccc' }} />
-                </div>
-
-                {/* Extra
-                <div className="mb-3">
-                    <label>Extra</label>
-                    <textarea
-                        name="extra"
-                        className="form-control"
-                        value={currentLocation.extra}
-                        onChange={handleInputChange}
-                    />
-                </div> */}
-
                 {/* Clue */}
                 <div className="mb-3">
                     <label>Clue</label>
-                    <textarea
+                    <input
+                        type="text"
                         name="clue"
                         className="form-control"
                         value={currentLocation.clue}
@@ -306,9 +327,15 @@ function LocationForm({ isNewLocation }) {
                     />
                 </div>
 
-                {/* Submit and Cancel buttons */}
+                {/* Content */}
+                <div className="mb-3">
+                    <label>Content</label>
+                    <div ref={quillRef} />
+                </div>
+
+                {/* Buttons */}
                 <button type="submit" className="btn btn-primary">
-                    {currentLocation.id ? 'Save Changes' : 'Add Location'}
+                    {isNewLocation ? 'Add Location' : 'Update Location'}
                 </button>
                 <Link to={`/location/${currentLocation.project_id}`} className="btn btn-secondary ms-2" onClick={handleCancelClick}> Cancel </Link>
             </form>
