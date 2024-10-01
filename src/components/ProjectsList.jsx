@@ -76,7 +76,7 @@ function ProjectList() {
                                     preventScrollReset={true} 
                                     reloadDocument={true}
                                     className="btn btn-warning mx-1">
-                                    Edit
+                                    View/Edit
                                 </Link>
 
                                 {/* View Locations button */}

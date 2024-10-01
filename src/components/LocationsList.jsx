@@ -156,7 +156,7 @@ function LocationsList() {
                                 </button>
 
                                 <Link to={`/location/edit/${location.id}`} className="btn btn-warning mx-1">
-                                    Edit
+                                    View/Edit
                                 </Link>
 
                                 <button
