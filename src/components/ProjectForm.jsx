@@ -13,6 +13,8 @@ function ProjectForm({ isNewProject }) {
     let existingProject = null;                                                 // Variable to store the existing project
     let firstRender = true;                                                     // Variable to track the first render
     const [isSubmitting, setIsSubmitting] = useState(false);                    // State to manage form submission
+    const [hoveredField, setHoveredField] = useState('');                       // State to track hovered field
+    const [errorFields, setErrorFields] = useState([]);                         // State to track required fields that are empty
 
     // State to manage the current project being added or edited
     const [currentProject, setCurrentProject] = useState({
@@ -74,6 +76,14 @@ function ProjectForm({ isNewProject }) {
     const handleFormSubmit = async (event) => {
         event.preventDefault(); 
 
+        const errors = [];
+        if (!currentProject.title) errors.push('title');
+        // Add any additional required field checks here
+        setErrorFields(errors);
+        if (errors.length > 0) {
+            return; // Prevent submission if there are errors
+        }
+
         // create a copy of currentProject and remove id
         let newProject = { ...currentProject };
         // remove id from newProject
@@ -110,7 +120,6 @@ function ProjectForm({ isNewProject }) {
         <div className="container">
             <h2>{currentProject.id ? 'Edit Project of id: ' + currentProject.id : 'Add Project'}</h2>
             
-            {/* Form to add or edit a project */}
             <form onSubmit={handleFormSubmit}>
 
                 {/* Input fields for project title */}
@@ -119,11 +128,16 @@ function ProjectForm({ isNewProject }) {
                     <input
                         type="text"
                         name="title"
-                        className="form-control"
+                        className={`form-control ${errorFields.includes('title') ? 'is-invalid' : ''}`}
                         value={currentProject.title}
                         onChange={handleInputChange}
+                        onMouseEnter={() => setHoveredField('title')}
+                        onMouseLeave={() => setHoveredField('')}
                         required
                     />
+                    {hoveredField === 'title' && (
+                        <small className="form-text text-muted">Please enter the project title.</small>
+                    )}
                 </div>
 
                 {/* Input fields for project description */}
@@ -134,7 +148,12 @@ function ProjectForm({ isNewProject }) {
                         className="form-control"
                         value={currentProject.description || ''}
                         onChange={handleInputChange}
+                        onMouseEnter={() => setHoveredField('description')}
+                        onMouseLeave={() => setHoveredField('')}
                     />
+                    {hoveredField === 'description' && (
+                        <small className="form-text text-muted">Provide a brief description of the project.</small>
+                    )}
                 </div>
 
                 {/* Input fields for project instructions */}
@@ -145,7 +164,12 @@ function ProjectForm({ isNewProject }) {
                         className="form-control"
                         value={currentProject.instructions}
                         onChange={handleInputChange}
+                        onMouseEnter={() => setHoveredField('instructions')}
+                        onMouseLeave={() => setHoveredField('')}
                     />
+                    {hoveredField === 'instructions' && (
+                        <small className="form-text text-muted">Instructions for the participants.</small>
+                    )}
                 </div>
 
                 {/* Input fields for project initial clue */}
@@ -156,7 +180,12 @@ function ProjectForm({ isNewProject }) {
                         className="form-control"
                         value={currentProject.initial_clue}
                         onChange={handleInputChange}
+                        onMouseEnter={() => setHoveredField('initial_clue')}
+                        onMouseLeave={() => setHoveredField('')}
                     />
+                    {hoveredField === 'initial_clue' && (
+                        <small className="form-text text-muted">The initial clue for the project.</small>
+                    )}
                 </div>
 
                 {/* Dropdown for homescreen display */}
@@ -167,11 +196,16 @@ function ProjectForm({ isNewProject }) {
                         className="form-control"
                         value={currentProject.homescreen_display}
                         onChange={handleInputChange}
+                        onMouseEnter={() => setHoveredField('homescreen_display')}
+                        onMouseLeave={() => setHoveredField('')}
                     >
                         <option value="Display initial clue">Display initial clue</option>
                         <option value="Display all locations">Display all locations</option>
                         <option value="Show map">Show map</option>
                     </select>
+                    {hoveredField === 'homescreen_display' && (
+                        <small className="form-text text-muted">Choose the homescreen display option.</small>
+                    )}
                 </div>
 
                 {/* Dropdown for participant scoring */}
@@ -182,22 +216,32 @@ function ProjectForm({ isNewProject }) {
                         className="form-control"
                         value={currentProject.participant_scoring}
                         onChange={handleInputChange}
+                        onMouseEnter={() => setHoveredField('participant_scoring')}
+                        onMouseLeave={() => setHoveredField('')}
                     >
                         <option value="Number of Scanned QR Codes">Number of Scanned QR Codes</option>
                         <option value="Number of Locations Entered">Number of Locations Entered</option>
                     </select>
+                    {hoveredField === 'participant_scoring' && (
+                        <small className="form-text text-muted">Choose the participant scoring method.</small>
+                    )}
                 </div>
 
                 {/* Checkbox for project published status */}
                 <div className="mb-3">
                     <label>Published</label>
                     <input
-                        type = "checkbox"
+                        type="checkbox"
                         name="is_published"
                         className="form-check-input"
                         checked={currentProject.is_published}
                         onChange={handleInputChange}
-                        />
+                        onMouseEnter={() => setHoveredField('is_published')}
+                        onMouseLeave={() => setHoveredField('')}
+                    />
+                    {hoveredField === 'is_published' && (
+                        <small className="form-text text-muted">Check to publish the project.</small>
+                    )}
                 </div>
 
                 {/* Submit and Cancel buttons */}
