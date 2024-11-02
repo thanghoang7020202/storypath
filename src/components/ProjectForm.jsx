@@ -220,8 +220,10 @@ project.</small>
                         onMouseEnter={() => setHoveredField('participant_scoring')}
                         onMouseLeave={() => setHoveredField('')}
                     >
+                        {/* Options include: "Not Scored", "Number of Scanned QR Codes", "Number of Locations Entered" */}
                         <option value="Number of Scanned QR Codes">Number of Scanned QR Codes</option>
                         <option value="Number of Locations Entered">Number of Locations Entered</option>
+                        <option value="Not Scored">Not Scored</option>
                     </select>
                     {hoveredField === 'participant_scoring' && (
                         <small className="form-text text-muted">Select how participants will be scored.</small>

@@ -44,7 +44,7 @@ Note: the conditions of my local machine are listed in the file **requirements.t
 
 3. **Start the development server**:
     ```bash
-    npm dev run
+    npm run dev
 
 4. **Open the browser**:
     Open your browser and visit http://localhost:5173/ or the address displayed in the terminal to view the application.
